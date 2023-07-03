@@ -24,24 +24,24 @@
 	<div id="contact-page" class="container">
     	<div class="bg">   	
     		<div class="row" style="margin-top:70px; margin-bottom:100px;">
-				<div class="col-sm-4">
-	    			<div class="contact-info">
-	    				<h2 class="title text-center">프로필관리</h2>
-	    				<ul style="border:1px solid #c2bfb9; height:290px; padding:40px 50px 50px 50px; text-align:center;">
-							<div class="my_list">
-								<a href="myPage">프로필관리</a>
-							</div>
-							<div class="my_list">
-								<a href="qna">1:1문의사항</a>
-							</div>
-						</ul>
-						<style>
-							.my_list {
-								line-height: 50px;
-							}
-						</style>
-	    			</div>
-    			</div>   	
+		     <div class="col-sm-4">
+		     <div class="contact-info">
+		       <h2 class="title text-center">프로필관리</h2>
+		       <ul style="border:1px solid #c2bfb9; height:290px; padding:40px 50px 50px 50px; text-align:center;">
+		         <div class="my_list">
+		           <a href="myPage">프로필관리</a>
+		         </div>
+		          <div class="my_list">
+		            <a href="qna">1:1문의사항</a>
+		          </div>
+		       </ul>
+		   <style>
+		      .my_list {
+		      line-height: 50px;
+		     }
+		   </style>
+		</div>
+		</div>   	
 	    		<div class="col-sm-8">
 	    			<div class="contact-form">
 	    				<h2 class="title text-center">내정보</h2>
@@ -58,8 +58,7 @@
 				            </div>
 				        </form>
 	    			</div>
-	    		</div>
-  			
+	    		</div> 			
 	    	</div>  
     	</div>	
     </div><!--/#contact-page-->
