@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mytripreal.mapper.UserMapper">	<!-- mapper 인터페이스가 위치하는 경로 -->
+
+    <!-- 회원가입 -->
+    <insert id="insertUser" parameterType="com.example.mytripreal.vo.UserVo" >
+        INSERT INTO member
+            (userEmail, password, userName, hp1, hp2, hp3, address1, address2, zipCode, regDate, updDate, lateDate, quitYn)
+        VALUES
+            (#{userEmail}, #{password}, #{userName}, #{hp1}, #{hp2}, #{hp3}, #{address1}, #{address2}, #{zipCode}, now(), now(), now(), 'N');
+    </insert>
+
+    <!-- 로그인 -->
+    <select id="getUserLogin" parameterType="hashMap" resultType="com.example.mytripreal.vo.UserVo">
+        SELECT *
+        FROM
+            (SELECT A.USEREMAIL, A.PASSWORD , A.USERNAME, B.LEVEL
+             FROM MEMBER A
+             LEFT OUTER JOIN ADMIN B
+               ON A.USEREMAIL = B.EMAIL
+            ) C
+        WHERE C.USEREMAIL = #{userEmail}
+          AND C.PASSWORD = #{password};
+    </select>
+
+    <!-- 모든회원정보 가져오기 -->
+    <select id="getUserList" parameterType="com.example.mytripreal.vo.UserVo" >
+        SELECT * FROM MEMBER;
+    </select>
+
+    <!--  특정회원정보 : 이메일로 가져오기  -->
+    <select id="getUserInfo" parameterType="hashMap" resultType="com.example.mytripreal.vo.UserVo">
+        SELECT *
+          FROM MEMBER
+         WHERE userEmail = #{userEmail}
+           AND password = #{password}
+    </select>
+
+    <!-- 회원정보 수정하기   -->
+    <update id="userUpdate" parameterType="com.example.mytripreal.vo.UserVo">
+        UPDATE member
+        SET userName = #{userName},
+                          password = #{password},
+                          hp1 = #{hp1},
+                          hp2 = #{hp2},
+                          hp3 = #{hp3},
+                          address1 = #{address1},
+                          address2 = #{address2},
+                          zipCode = #{zipCode}
+        WHERE userEmail = #{userEmail}
+    </update>
+
+</mapper>
