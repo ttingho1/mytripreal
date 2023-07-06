@@ -28,7 +28,7 @@
         SELECT * FROM MEMBER;
     </select>
 
-    <!--  특정회원정보 : 이메일로 가져오기  -->
+    <!--  특정회원정보 가져오기  -->
     <select id="getUserInfo" parameterType="hashMap" resultType="com.example.mytripreal.vo.UserVo">
         SELECT *
           FROM MEMBER

@@ -46,18 +46,18 @@
 	    			<div class="contact-form">
 	    				<h2 class="title text-center">새 문의작성</h2>
 	    				<div class="status alert alert-success" style="display: none"></div>
-				    	<form id="main-contact-form" class="contact-form row" name="contact-form" action="/inquiry" method="post">
+				    	<form id="main-contact-form" class="contact-form row" name="contact-form" action="/qnaInsert.do" method="post">
 				            <div class="form-group col-md-6">
-				                <input type="text" name="name" id="name" class="form-control" required="required" value="${userEmail}" readonly>
+				                <input type="text" name="name" id="name" class="form-control" required="required" value="${sessionScope.userEmail}" readonly>
 				            </div>
 				            <div class="form-group col-md-6">
-				                <input type="email" name="email" id="email" class="form-control" required="required" value="${userName}" readonly>
+				                <input type="email" name="email" id="email" class="form-control" required="required" value="${sessionScope.userName}" readonly>
 				            </div>
 				            <div class="form-group col-md-12">
 				                <input type="text" name="subject" id="subject" class="form-control" required="required" placeholder="제목">
 				            </div>
 				            <div class="form-group col-md-12">
-				                <textarea name="message" id="message" required class="form-control" rows="8" placeholder="내용을 적어주세요"></textarea>
+				                <textarea name="content" id="content" required class="form-control" rows="8" placeholder="내용을 적어주세요" style="height:155px;"></textarea>
 				            </div>                        
 				            <div class="form-group col-md-12">
 				                <input type="submit" name="submit" class="btn btn-primary pull-right" value="작성완료">
@@ -65,7 +65,6 @@
 				        </form>
 	    			</div>
 	    		</div>
-  			
 	    	</div>  
     	</div>	
     </div><!--/#contact-page-->
@@ -75,40 +74,25 @@
 				<div class="col-sm-9 padding-right">
 					<div class="features_items"><!--features_items-->
 						<h2 class="title text-center">나의문의내역</h2>
+
 						<table>
 							<thead>
 							  <tr>
 								<th>번호</th>
 								<th>제목</th>
 								<th>등록일</th>
+								<th>답변상태</th>
 							  </tr>
 							</thead>
 							<tbody>
-							  <tr>
-								<td>1</td>
-								<td>Joakim Noah</td>
-								<td>C</td>
-							  </tr>
-							  <tr>
-								<td>2</td>
-								<td>Vladimir Radmanovic</td>
-								<td>F</td>
-							  </tr>
-							  <tr>
-								<td>3</td>
-								<td>Nate Robinson</td>
-								<td>G</td>
-							  </tr>
-							  <tr>
-								<td>4</td>
-								<td>Derrick Rose</td>
-								<td>G</td>
-							  </tr>
-							  <tr>
-								<td>5</td>
-								<td>Marquis Teague</td>
-								<td>G</td>
-							  </tr>
+							<c:forEach var="boardVo" items="${boardVo}" begin="0" end="2">
+								<tr>
+									<td>${boardVo.num}</td>
+									<td>${boardVo.subject}</td>
+									<td>${boardVo.bdRegDate}</td>
+									<td>${boardVo.answerYn}</td>
+								</tr>
+							</c:forEach>
 							</tbody>
 						  </table>
 					</div><!--features_items-->

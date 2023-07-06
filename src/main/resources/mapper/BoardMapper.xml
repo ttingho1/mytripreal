@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mytripreal.mapper.BoardMapper">	<!-- mapper 인터페이스가 위치하는 경로 -->
+                                                                                          <!-- insert한 pk 값 가져오기 -->
+    <!-- 글등록 -->                                                                        <!-- 자동생성된 키여부 : false(default) keyProperty : pk설정한컬럼(리턴될키컬럼) -->
+    <insert id="insertBoardMapper" parameterType="com.example.mytripreal.vo.BoardVo" useGeneratedKeys="true" keyProperty="num" >
+        INSERT INTO board
+            (userEmail, subject, content, bdRegDate)
+            VALUES
+            (#{userEmail}, #{subject}, #{content}, now());
+    </insert>
+
+    <!-- 회원별 나의문의내역 가져오기-->
+    <select id="selectMyQna" parameterType="hashMap" resultType="com.example.mytripreal.vo.BoardVo" >
+        SELECT *
+        FROM board
+        WHERE userEmail = #{userEmail};
+    </select>
+
+
+
+
+
+
+</mapper>

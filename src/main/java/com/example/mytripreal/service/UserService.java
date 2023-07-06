@@ -5,7 +5,6 @@ import com.example.mytripreal.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 
 
@@ -77,6 +76,8 @@ public class UserService {
         }
         return result;
     }
+
+
 
 
 
