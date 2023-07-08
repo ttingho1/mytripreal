@@ -90,13 +90,32 @@
                 }
             });
         });
+
+        // 비밀번호 일치/불일치 알림
+var test = {
+    passwd : function (e) {
+        if(  $("#password").val() != $("#password2").val()  ) {
+            alert('비밀번호가 일치하지 않습니다.');
+            return;
+        }
+        $("#frm").submit();
+
+    },
+
+    // passwd2 : function (e) {}
+}
+
+
+
+
+
     </script>
 </head>
 <body data-spy="scroll" data-target="#main-navbar">
     <div id="bg_wrap">
         <section>
             <div class="loginbox" style="top:90px;">
-                <form action="userUpdate.do" method="post">
+                <form id="frm" action="userUpdate.do" method="post">
                     <div class="title">회원정보수정</div>
                     <div class="input-box">
                         <input type="password" name="password" id="password" placeholder="새 비밀번호*" required>
@@ -129,7 +148,7 @@
                         <input type="text" name="address2" id="address2" value="${userVo.address2}" placeholder="상세주소*" required>
                         <div class="underline"></div>
                     </div>
-                    <button type="submit" class="input-box button">변경하기</button>
+                    <input type="button" class="input-box button" value="변경하기" onclick="test.passwd();">
                 </form>
 
             </div>

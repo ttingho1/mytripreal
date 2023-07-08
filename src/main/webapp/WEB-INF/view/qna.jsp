@@ -26,7 +26,7 @@
     		<div class="row" style="margin-top:70px;">
 				<div class="col-sm-4">
 	    			<div class="contact-info">
-	    				<h2 class="title text-center">메뉴</h2>
+	    				<h2 class="title text-center">1:1문의사항</h2>
 	    				<ul style="border:1px solid #c2bfb9; height:290px; padding:40px 50px 50px 50px; text-align:center;">
 							<div class="my_list">
 								<a href="myPage">프로필관리</a>
@@ -74,12 +74,12 @@
 				<div class="col-sm-9 padding-right">
 					<div class="features_items"><!--features_items-->
 						<h2 class="title text-center">나의문의내역</h2>
-
+						<h3 style="color: red; margin-top: -20px; font-size: 13px;">*최근 3개문의 내역만 표시됩니다.</h3>
 						<table>
 							<thead>
 							  <tr>
 								<th>번호</th>
-								<th>제목</th>
+								<th style="width: 700px;">제목</th>
 								<th>등록일</th>
 								<th>답변상태</th>
 							  </tr>
@@ -88,7 +88,7 @@
 							<c:forEach var="boardVo" items="${boardVo}" begin="0" end="2">
 								<tr>
 									<td>${boardVo.num}</td>
-									<td>${boardVo.subject}</td>
+									<td><a href="${path}/qnaView?num=${boardVo.num}">${boardVo.subject}</a></td>
 									<td>${boardVo.bdRegDate}</td>
 									<td>${boardVo.answerYn}</td>
 								</tr>

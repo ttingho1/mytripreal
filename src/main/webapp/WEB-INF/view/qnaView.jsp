@@ -25,28 +25,28 @@
     <section>
         <div class="tableDefault">
             <table>
-                <tbody><tr>
+                <tbody>
+                <tr>
                     <th>제목</th>
                     <td>
-                        카카오톡 공식채널 오픈 안내
+                        ${boardVo.subject}
                     </td>
                 </tr>
                 <tr>
                     <th>등록일</th>
-                    <td>2023.06.02 14:31:24</td>
+                    <td>${boardVo.bdRegDate}</td>
                 </tr>
                 <tr>
                     <th>답변상태</th>
                     <td>
-                        완료
+                        ${boardVo.answerYn}
                     </td>
                 </tr>
                 <tr style="height:500px;">
                     <td colspan="2">
                         <div class="boardConentsView">
-                            <p style="text-align: center;">
-                                내용을 쓰면 어떻게 나오지
-                                <img src="https://via.placeholder.com/500x300" alt="">
+                            <p style="height: 300px; margin-top: -130px;">
+                                ${boardVo.content}
                             </p>
                         </div>
                     </td>
@@ -56,7 +56,7 @@
             <div class="btnWrap view text-center clearFix list-all">
                 <p class="col-sm-6 text-left text-center-m ">
     <%--            <a href="/customer/customer-info-list.do" class="btn btn-gray2 btn-lg fs15">목록</a>--%>
-                    <a href="#none" class="btn btn-gray2 btn-lg fs15">임시</a>
+                    <a href="/qna" class="btn btn-gray2 btn-lg fs15">목록</a>
                 </p>
                 <p class="col-sm-6 text-right text-center-m mt20xs">
 

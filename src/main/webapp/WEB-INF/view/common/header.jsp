@@ -47,8 +47,8 @@
                                 <li><a href="myPage"><i class="fa fa-lock"></i>마이페이지</a></li>
                                 <li><a href="logout"><i class="fa fa-user"></i>${sessionScope.userName}님 로그아웃</a></li>
                             </c:if>
-                            <c:if test="${sessionScope.adminYn eq 'Y'}">
-                                <li><a href="/admin/"><i class="fa fa-user"></i>관리자페이지</a></li>
+                            <c:if test="${sessionScope.level eq 1}">
+                                <li><a href="/admin.do"><i class="fa fa-user"></i>관리자페이지</a></li>
                             </c:if>
                         </ul>
                     </div>

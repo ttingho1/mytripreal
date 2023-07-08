@@ -14,4 +14,7 @@ public interface BoardMapper {
 
     // 1:1문의사항 등록한글 가져오기
     List<BoardVo> selectMyQna(HashMap hashMap);
+
+    // 문의내역 상세보기 상세보기
+    BoardVo qnaViewInfo(HashMap hashMap);
 }

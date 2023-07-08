@@ -282,7 +282,7 @@
 						<!-- start: User Dropdown -->
 						<li class="dropdown">
 							<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-								<c:if test="${sessionScope.userEmail ne null}">
+								<c:if test="${sessionScope.userName ne null}">
 									<i class="halflings-icon white user"></i> ${sessionScope.userName}님
 								</c:if>
 								<c:if test="${sessionScope.email ne null}">
@@ -295,7 +295,7 @@
  									<span>Account Settings</span>
 								</li>
 								<li><a href="#"><i class="halflings-icon user"></i> Profile</a></li>
-								<li><a href="login"><i class="halflings-icon off"></i> Logout</a></li>
+								<li><a href="/admin/adLogout.do"><i class="halflings-icon off"></i>Logout</a></li>
 							</ul>
 						</li>
 						<!-- end: User Dropdown -->

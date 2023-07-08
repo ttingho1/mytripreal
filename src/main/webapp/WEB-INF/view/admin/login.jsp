@@ -26,8 +26,8 @@
 <body data-spy="scroll" data-target="#main-navbar">
 <div id="bg_wrap">
     <section>
-        <div class="loginbox">
-            <form action="/admin/login" method="post">
+        <div class="loginbox" style="width: 400px;">
+            <form action="/admin/adLogin.do" method="post">
                 <div class="title">관리자로그인</div>
                 <div class="input-box underline">
                     <input type="text" name="email" id="email" placeholder="이메일" required>
@@ -39,6 +39,10 @@
                 </div>
                 <button type="submit" class="input-box button">로그인</button>
             </form>
+            <p>
+                id : test<br>
+                pw : 1234
+            </p>
         </div>
     </section>
 </div>

@@ -10,11 +10,20 @@
             (#{userEmail}, #{subject}, #{content}, now());
     </insert>
 
-    <!-- 회원별 나의문의내역 가져오기-->
+    <!-- 회원별 나의문의내역 가져오기(최신순 3개)-->
     <select id="selectMyQna" parameterType="hashMap" resultType="com.example.mytripreal.vo.BoardVo" >
         SELECT *
         FROM board
-        WHERE userEmail = #{userEmail};
+        WHERE userEmail = #{userEmail}
+        ORDER BY bdRegDate desc
+        LIMIT 3;
+    </select>
+
+    <!--문의내역 상세보기-->
+    <select id="qnaViewInfo" resultType="com.example.mytripreal.vo.BoardVo">
+        SELECT *
+        FROM board
+        WHERE num = ${num};
     </select>
 
 

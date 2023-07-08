@@ -44,8 +44,12 @@
                         <li><a href="sign">이메일로 회원가입</a></li>
                     </ul>
                   </div>
-                    <button type="submit" class="input-box button">로그인</button>
+                    <input type="submit" class="input-box button" value="로그인">
                 </form>
+                <p>
+                    id: ttingho1@naver.com<br>
+                    pw : 1234
+                </p>
             </div>
         </section>
     </div>
