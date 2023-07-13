@@ -48,10 +48,10 @@
 	    				<div class="status alert alert-success" style="display: none"></div>
 				    	<form id="main-contact-form" class="contact-form row" name="contact-form" action="/qnaInsert.do" method="post">
 				            <div class="form-group col-md-6">
-				                <input type="text" name="name" id="name" class="form-control" required="required" value="${sessionScope.userEmail}" readonly>
+				                <input type="text" name="email" id="email" class="form-control" required="required" value="${sessionScope.userEmail}" readonly>
 				            </div>
 				            <div class="form-group col-md-6">
-				                <input type="email" name="email" id="email" class="form-control" required="required" value="${sessionScope.userName}" readonly>
+				                <input type="email" name="name" id="name" class="form-control" required="required" value="${sessionScope.userName}" readonly>
 				            </div>
 				            <div class="form-group col-md-12">
 				                <input type="text" name="subject" id="subject" class="form-control" required="required" placeholder="제목">

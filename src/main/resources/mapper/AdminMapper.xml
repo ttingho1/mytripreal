@@ -7,6 +7,24 @@
         SELECT * FROM admin WHERE email = #{email} AND password = #{password};
     </select>
 
+    <!-- 총 회원수 -->
+    <select id="getMemberListCount" resultType="int">
+        SELECT COUNT(*) FROM MEMBER;
+    </select>
 
+    <!--총 문의수 -->
+    <select id="getQnaListCount" resultType="int">
+        SELECT COUNT(*) FROM BOARD;
+    </select>
+
+    <!--답변완료 문의-->
+    <select id="getQnaAnswerYnIsY" resultType="int">
+        SELECT COUNT(*) FROM BOARD WHERE answerYn = 'Y';
+    </select>
+
+    <!--답변대기 문의-->
+    <select id="getQnaAnswerYnIsN" resultType="int">
+        SELECT COUNT(*) FROM BOARD WHERE answerYn = 'N';
+    </select>
 
 </mapper>

@@ -2,9 +2,13 @@ package com.example.mytripreal.controller;
 
 
 import com.example.mytripreal.service.AdminService;
+import com.example.mytripreal.service.UserService;
 import com.example.mytripreal.vo.AdminVo;
+import com.example.mytripreal.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -13,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.List;
 
 
 @Controller
@@ -23,11 +28,15 @@ public class AdminAccountController {
     private AdminService adminService;
 
     @Autowired
-    private UserAccountController userAccountController;
+    private UserService userService;
 
     // 어드민페이지 직접 요청
     @GetMapping("/admin")
-    public String toAdminGet(){
+    public String toAdminGet(HttpSession session){
+        String adminSession = session.getAttribute("email") == null ? "" : session.getAttribute("email").toString();
+        if(adminSession != ""){
+            return "/admin/index";
+        }
         return "/admin/login";
     }
 
@@ -54,11 +63,12 @@ public class AdminAccountController {
     }
 
     // 로그인페이지 - 처리
-    @PostMapping("/admin/adLogin.do")
-    public String adminLogin(HttpSession session, String email, String password, HttpServletResponse response) throws IOException {
+    @PostMapping("/admin")
+    public String adminLogin(HttpSession session, String email, String password, HttpServletResponse response, ModelMap mm) throws IOException {
         HashMap hashMap = new HashMap();
         response.setContentType("text/html; charset=UTF-8");
         PrintWriter out = response.getWriter();
+        //ModelMap mm = new ModelMap();
 
         hashMap.put("email", email);
         hashMap.put("password", password);
@@ -67,8 +77,23 @@ public class AdminAccountController {
         if(adminVo != null){
             session.setAttribute("email", adminVo.getEmail());
             session.setAttribute("name", adminVo.getName());
+            // 총 회원수
+            int memResult = adminService.getMemberListCount(mm);
+            mm.addAttribute("memResult", memResult);
+            // 총 문의수
+            int qnaResult = adminService.getQnaListCount(mm);
+            mm.addAttribute("qnaResult", qnaResult);
+            // 답변완료 문의수
+            int Yresult = adminService.getQnaAnswerYnIsY(mm);
+            mm.addAttribute("Yresult", Yresult);
+            // 답변대기 문의수
+            int Nresult = adminService.getQnaAnswerYnIsN(mm);
+            mm.addAttribute("Nresult", Nresult);
+
+
             return "/admin/index";
         }
+
         out.println("<script>alert('회원 정보를 찾을 수 없습니다.'); location.href = 'redirect:/admin/login';</script>");
         out.flush();
         return null;
@@ -80,6 +105,8 @@ public class AdminAccountController {
         session.invalidate();
         return "redirect:/admin";
     }
+
+
 
 
 

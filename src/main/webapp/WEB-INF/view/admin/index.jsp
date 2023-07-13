@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="KO">
 <head>
@@ -17,6 +18,12 @@
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&subset=latin,cyrillic-ext,latin-ext' rel='stylesheet' type='text/css'>
 	<!-- end: CSS -->	
 </head>
+<style>
+	.statbox .number {
+		right: 0;
+		top: 0;
+	}
+</style>
 <body>
 	<!-- start: Header -->
 	<div class="navbar">
@@ -27,7 +34,7 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</a>
-				<a class="brand" href="admin/index"><span>호앤삐</span></a>
+				<a class="brand" href="/admin"><span>호앤삐</span></a>
 								
 				<!-- start: Header Menu -->
 				<div class="nav-no-collapse header-nav">
@@ -315,10 +322,13 @@
 			<div id="sidebar-left" class="span2">
 				<div class="nav-collapse sidebar-nav">
 					<ul class="nav nav-tabs nav-stacked main-menu">
-						<li><a href="index"><i class="icon-bar-chart"></i><span class="hidden-tablet"> Dashboard</span></a></li>
+						<li><a href="/admin"><i class="icon-bar-chart"></i><span class="hidden-tablet"> 대시보드</span></a></li>
+						<li><a href="#none"><i class="icon-bar-chart"></i><span class="hidden-tablet"> 회원관리 </span></a></li>
+						<li><a href="#none"><i class="icon-bar-chart"></i><span class="hidden-tablet"> 문의관리 </span></a></li>
 					</ul>
 				</div>
 			</div>
+
 			<!-- end: Main Menu -->
 			
 			<noscript>
@@ -329,7 +339,7 @@
 			</noscript>
 			
 			<!-- start: Content -->
-			<div id="content" class="span10">
+			<div id="content" class="span10" style="height: 950px;">
 			
 			
 			<ul class="breadcrumb">
@@ -344,23 +354,71 @@
 			<div class="row-fluid">
 				
 				<div class="span3 statbox purple" onTablet="span6" onDesktop="span3">
-					<div class="number">854<i class="icon-arrow-up"></i></div>
-					<div class="title">방문자수</div>
-				</div>
-				<div class="span3 statbox green" onTablet="span6" onDesktop="span3">
-					<div class="number">123<i class="icon-arrow-up"></i></div>
-					<div class="title">문의수</div>
-				</div>
-				<div class="span3 statbox blue noMargin" onTablet="span6" onDesktop="span3">
-					<div class="number">982<i class="icon-arrow-up"></i></div>
-					<div class="title">신규회원수</div>
+					<div class="number">${memResult}명<i class="icon-arrow-up"></i></div>
+					<div class="title">총 회원수</div>
 				</div>
 				<div class="span3 statbox yellow" onTablet="span6" onDesktop="span3">
-					<div class="number">678<i class="icon-arrow-down"></i></div>
-					<div class="title">탈퇴회원수</div>
-				</div>	
+					<div class="number">???<i class="icon-arrow-down"></i></div>
+					<div class="title">신규가입(오늘)</div>
+				</div>
+				<div class="span3 statbox blue noMargin" onTablet="span6" onDesktop="span3">
+					<div class="number">???<i class="icon-arrow-up"></i></div>
+					<div class="title">신규가입(이번주)</div>
+				</div>
+				<div class="span3 statbox green" onTablet="span6" onDesktop="span3">
+					<div class="number">???<i class="icon-arrow-up"></i></div>
+					<div class="title">신규가입(이번달)</div>
+				</div>
+			</div>
 
-			</div>		
+			<div class="row-fluid">
+
+				<div class="span3 statbox red" onTablet="span6" onDesktop="span3">
+					<div class="number">${qnaResult}개<i class="icon-arrow-up"></i></div>
+					<div class="title">총 문의수</div>
+				</div>
+				<div class="span3 statbox blue" onTablet="span6" onDesktop="span3">
+					<div class="number">${Yresult}개<i class="icon-arrow-up"></i></div>
+					<div class="title">답변완료 문의</div>
+				</div>
+				<div class="span3 statbox orange noMargin" onTablet="span6" onDesktop="span3">
+					<div class="number">${Nresult}개<i class="icon-arrow-up"></i></div>
+					<div class="title">답변대기 문의</div>
+				</div>
+			</div>
+
+			<div class="row-fluid">
+<!--
+				<div class="span3 statbox blue" onTablet="span6" onDesktop="span3">
+					<div class="number">???<i class="icon-arrow-up"></i></div>
+					<div class="title">총 예약횟수</div>
+				</div>
+				<div class="span3 statbox red" onTablet="span6" onDesktop="span3">
+					<div class="number">???<i class="icon-arrow-up"></i></div>
+					<div class="title">예약(이번달)</div>
+				</div>
+				<div class="span3 statbox yellow noMargin" onTablet="span6" onDesktop="span3">
+					<div class="number">???<i class="icon-arrow-up"></i></div>
+					<div class="title">예약(이번주)</div>
+				</div>
+				<div class="span3 statbox green noMargin" onTablet="span6" onDesktop="span3">
+					<div class="number">???<i class="icon-arrow-up"></i></div>
+					<div class="title">예약(오늘)</div>
+				</div>
+			</div>
+-->
+			<div class="row-fluid">
+<!--
+				<div class="span3 statbox green" onTablet="span6" onDesktop="span3">
+					<div class="number">???<i class="icon-arrow-up"></i></div>
+					<div class="title">예약취소</div>
+				</div>
+-->
+				<div class="span3 statbox yellow" onTablet="span6" onDesktop="span3">
+					<div class="number">???<i class="icon-arrow-up"></i></div>
+					<div class="title">회원탈퇴</div>
+				</div>
+			</div>
 		
 	</div><!--/.fluid-container-->
 	

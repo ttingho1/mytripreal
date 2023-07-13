@@ -27,7 +27,7 @@
 <div id="bg_wrap">
     <section>
         <div class="loginbox" style="width: 400px;">
-            <form action="/admin/adLogin.do" method="post">
+            <form action="/admin" method="post">
                 <div class="title">관리자로그인</div>
                 <div class="input-box underline">
                     <input type="text" name="email" id="email" placeholder="이메일" required>
