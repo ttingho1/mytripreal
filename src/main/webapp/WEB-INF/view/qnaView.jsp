@@ -18,7 +18,14 @@
     <link rel="stylesheet" href="resources/static/css/font.css">
     <link rel="stylesheet" href="resources/static/css/reset.css">
     <link rel="stylesheet" href="resources/static/css/qnaView.css">
+    <link id="bootstrap-style" href="/resources/static/admin/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/resources/static/admin/css/bootstrap-responsive.min.css" rel="stylesheet">
 </head>
+<style>
+    textarea {
+        background-color: #fff;
+    }
+</style>
 <body>
 <jsp:include page="common/header.jsp"/><!--header.jsp -->
 <div class="container">
@@ -46,7 +53,8 @@
                     <td colspan="2">
                         <div class="boardConentsView">
                             <p style="height: 300px; margin-top: -130px;">
-                                ${boardVo.content}
+                                <textarea name="question" id="question" cols="30" rows="10" style="width: 100%"; resize="none;">${boardVo.content}</textarea>
+                                <textarea name="answer" id="answer" cols="30" rows="10" style="width: 100%;" resize="none;">${boardVo.contentAnswer}</textarea>
                             </p>
                         </div>
                     </td>

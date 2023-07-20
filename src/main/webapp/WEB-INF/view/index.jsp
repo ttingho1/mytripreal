@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="resources/static/css/font.css">
     <link rel="stylesheet" href="resources/static/css/reset.css">
     <link rel="stylesheet" href="resources/static/css/font-awesome.min.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 </head>
 <body>
 <jsp:include page="common/header.jsp"/><!--header.jsp -->
@@ -96,78 +97,20 @@
             <div class="col-sm-9 padding-right">
                 <div class="features_items"><!--features_items-->
                     <h2 class="title text-center">객실미리보기</h2>
-                    <div class="col-sm-4">
-                        <div class="product-image-wrapper">
-                            <div class="single-products">
-                                <div class="productinfo text-center">
-                                    <img src="resources/static/images/room/index1_1.jpg" width="350" height="327" alt="" />
-                                    <h3>스이란의 방</h3>
-                                    <p>Easy Polo Black Edition</p>
-                                    <a href="#none" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>객실예약하기</a>
+                    <c:forEach var="roomVo" items="${roomVo}">
+                        <div class="col-sm-4">
+                            <div class="product-image-wrapper">
+                                <div class="single-products">
+                                    <div class="productinfo text-center">
+                                        <img src="${roomVo.main_image}" width="350" height="327" alt="" />
+                                        <h3>${roomVo.room_name}</h3>
+                                        <p>Easy Polo Black Edition</p>
+                                        <a href="${path}/roomDetail?room_no=${roomVo.room_no}" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>객실상세보기</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="product-image-wrapper">
-                            <div class="single-products">
-                                <div class="productinfo text-center">
-                                    <img src="resources/static/images/room/index2_1.jpg" width="350" height="327" alt="" />
-                                    <h3>퀸테사의 방</h3>
-                                    <p>Easy Polo Black Edition</p>
-                                    <a href="#none" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>객실예약하기</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="product-image-wrapper">
-                            <div class="single-products">
-                                <div class="productinfo text-center">
-                                    <img src="resources/static/images/room/index3_1.jpg" width="350" height="327" alt="" />
-                                    <h3>니코의 방</h3>
-                                    <p>Easy Polo Black Edition</p>
-                                    <a href="#none" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>객실예약하기</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="product-image-wrapper">
-                            <div class="single-products">
-                                <div class="productinfo text-center">
-                                    <img src="resources/static/images/room/index4_1.jpg" width="350" height="327" alt="" />
-                                    <h3>하얏트의 방</h3>
-                                    <p>Easy Polo Black Edition</p>
-                                    <a href="#none" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>객실예약하기</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="product-image-wrapper">
-                            <div class="single-products">
-                                <div class="productinfo text-center">
-                                    <img src="resources/static/images/room/index5_1.jpg" width="350" height="327" alt="" />
-                                    <h3>카가야의 방</h3>
-                                    <p>Easy Polo Black Edition</p>
-                                    <a href="#none" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>객실예약하기</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="product-image-wrapper">
-                            <div class="single-products">
-                                <div class="productinfo text-center">
-                                    <img src="resources/static/images/room/index6_1.jpg" width="350" height="327" alt="" />
-                                    <h3>후지야의 방</h3>
-                                    <p>Easy Polo Black Edition</p>
-                                    <a href="#none" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>객실예약하기</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </c:forEach>
                 </div><!--features_items-->
                 <div class="recommended_items"><!--recommended_items-->
                     <h2 class="title text-center">호앤삐만의 혜택!</h2>
@@ -179,7 +122,7 @@
                                         <div class="single-products">
                                             <div class="productinfo text-center">
                                                 <img src="resources/static/images/benefit1.jpg" width="350" height="176" alt="" />
-                                                <h3>공요공간</h3>
+                                                <h3>공용공간</h3>
                                                 <p>공용공간에서 이야기를 즐겨요!</p>
                                             </div>
                                         </div>

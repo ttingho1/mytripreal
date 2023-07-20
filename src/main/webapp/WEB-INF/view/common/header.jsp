@@ -25,7 +25,7 @@
             <div class="row">
                 <div class="col-sm-4">
                     <div class="logo pull-left">
-<%--                        <a href="index"><img src="https://via.placeholder.com/139x39" alt="logo" /></a>--%>
+                        <a href="/"><img src="https://via.placeholder.com/139x39" alt="logo" /></a>
                     </div>
                 </div>
                 <div class="col-sm-8">
@@ -48,7 +48,7 @@
                                 <li><a href="logout"><i class="fa fa-user"></i>${sessionScope.userName}님 로그아웃</a></li>
                             </c:if>
                             <c:if test="${sessionScope.level eq 1}">
-                                <li><a href="/admin.do"><i class="fa fa-user"></i>관리자페이지</a></li>
+                                <li><a href="/admin"><i class="fa fa-user"></i>관리자페이지</a></li>
                             </c:if>
                         </ul>
                     </div>

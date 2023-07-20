@@ -16,7 +16,7 @@ import java.util.HashMap;
 
 
 @Controller
-public class UserAccountController {
+public class UserController {
 
     // 서비스로 연결하기위한 선언
     @Autowired
@@ -90,7 +90,7 @@ public class UserAccountController {
     // 유저의 정보는 jstl에서 세션에 담긴 정보를 가지고 불러오기 때문에 굳이 DB에 왔다가지않음
     // 만약 주소정보도 가져오려면 DB에서 가져오긴 해야겠지...
     @GetMapping("/myPage")
-    public String toMyPage(HttpSession session, String userEmail, HttpServletResponse response) throws IOException {
+    public String toMyPage(HttpSession session, HttpServletResponse response) throws IOException {
         // (null처리)세션에 userEmail이 비어있으면 login으로..아니면 myPage로
         String userSession = session.getAttribute("userEmail") == null ? "" : session.getAttribute("userEmail").toString();
         response.setContentType("text/html; charset=UTF-8");
@@ -166,6 +166,8 @@ public class UserAccountController {
         out.flush();
         return null;
     }
+
+
 
 
 

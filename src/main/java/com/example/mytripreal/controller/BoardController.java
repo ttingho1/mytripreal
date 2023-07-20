@@ -27,7 +27,11 @@ public class BoardController {
 
         hashMap.put("userEmail", userEmail);
         List<BoardVo> boardVo = boardService.selectMyQna(hashMap);
-        if(boardVo.get(0).getUserEmail() != ""){
+//       if(boardVo.get(0).getUserEmail() != ""){
+//          mm.put("boardVo", boardVo);
+//          return "/qna";
+//        }
+        if(userEmail != ""){
             mm.put("boardVo", boardVo);
             return "/qna";
         }

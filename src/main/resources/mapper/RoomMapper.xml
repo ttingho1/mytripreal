@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mytripreal.mapper.RoomMapper">	<!-- mapper 인터페이스가 위치하는 경로 -->
+
+    <!-- 메인페이지 - 객실미리보기   -->
+    <select id="getRoomList" resultType="com.example.mytripreal.vo.RoomVo">
+        SELECT * FROM room;
+    </select>
+
+    <!-- 객실 상세보기 -->
+    <select id="getRoomInfo" parameterType="hashMap" resultType="com.example.mytripreal.vo.RoomVo">
+        SELECT * FROM room WHERE room_no = #{room_no};
+    </select>
+
+
+
+
+
+</mapper>

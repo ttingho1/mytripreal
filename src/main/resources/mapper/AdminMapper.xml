@@ -2,10 +2,42 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.mytripreal.mapper.AdminMapper">	<!-- mapper 인터페이스가 위치하는 경로 -->
 
-    <!--  어드민회원 가져오기  -->
+    <!--  어드민회원 로그인  -->
     <select id="adminLoginMapper" parameterType="hashMap" resultType="com.example.mytripreal.vo.AdminVo">
-        SELECT * FROM admin WHERE email = #{email} AND password = #{password};
+        SELECT * FROM ADMIN where userEmail = #{userEmail} and password = #{password};
     </select>
+
+    <!-- 전체회원목록 가져오기(어드민포함)   -->
+    <select id="getMemberList" resultType="com.example.mytripreal.vo.AdminVo">
+        SELECT *
+        FROM
+            (SELECT A.USEREMAIL, A.USERNAME, A.ADDRESS1, A.ADDRESS2, A.zipCode, A.regDate, A.updDate, A.lateDate, B.LEVEL
+             FROM MEMBER A
+                      LEFT OUTER JOIN ADMIN B
+                                      ON A.USEREMAIL = B.USEREMAIL
+            ) C;
+    </select>
+
+    <!-- 전체 문의가져오기(답변안된문의 내림차순) -->
+    <select id="getQnaList" resultType="com.example.mytripreal.vo.BoardVo">
+        SELECT a.num, b.userEmail, b.userName, a.subject, a.bdRegDate, a.answerYn, a.contentAnswer, a.answerAdmin
+        FROM board a
+                 INNER JOIN member b
+                            ON a.userEmail = b.userEmail
+        ORDER BY answerYn;
+    </select>
+
+    <!-- 문의내역 상세보기 -->
+    <select id="qnaListViewInfo" parameterType="hashMap" resultType="com.example.mytripreal.vo.BoardVo">
+        SELECT *
+        FROM board
+        WHERE num = ${num};
+    </select>
+
+    <!-- 문의내역 답변등록 -->
+    <update id="qnaListViewAnswer" parameterType="hashMap">
+        UPDATE board SET contentAnswer = #{contentAnswer}, answerAdmin = #{answerAdmin}, answerYn = 'Y' WHERE num = #{num};
+    </update>
 
     <!-- 총 회원수 -->
     <select id="getMemberListCount" resultType="int">
@@ -26,5 +58,12 @@
     <select id="getQnaAnswerYnIsN" resultType="int">
         SELECT COUNT(*) FROM BOARD WHERE answerYn = 'N';
     </select>
+
+    <!-- 오늘 가입한 회원 수-->
+    <select id="todayJoinMember" resultType="int">
+        SELECT COUNT(*) FROM member WHERE regDate = curdate();
+    </select>
+
+
 
 </mapper>

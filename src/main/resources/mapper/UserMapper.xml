@@ -17,7 +17,7 @@
             (SELECT A.USEREMAIL, A.PASSWORD , A.USERNAME, B.LEVEL
              FROM MEMBER A
              LEFT OUTER JOIN ADMIN B
-               ON A.USEREMAIL = B.EMAIL
+               ON A.USEREMAIL = B.USEREMAIL
             ) C
         WHERE C.USEREMAIL = #{userEmail}
           AND C.PASSWORD = #{password};

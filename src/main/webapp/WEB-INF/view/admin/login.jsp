@@ -30,7 +30,7 @@
             <form action="/admin" method="post">
                 <div class="title">관리자로그인</div>
                 <div class="input-box underline">
-                    <input type="text" name="email" id="email" placeholder="이메일" required>
+                    <input type="text" name="userEmail" id="userEmail" placeholder="이메일" required>
                     <div class="underline"></div>
                 </div>
                 <div class="input-box">

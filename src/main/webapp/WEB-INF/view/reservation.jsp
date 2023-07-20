@@ -1,645 +1,871 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <title>호텔 - 호앤삐</title>
-    <link href="resources/static/css/font-awesome.min.css" rel="stylesheet">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<title>호텔 - 호앤삐</title>
+	<link rel="stylesheet" href="resources/static/css/bootstrap.min.css">
+	<link rel="stylesheet" href="resources/static/css/prettyPhoto.css">
+	<link rel="stylesheet" href="resources/static/css/price-range.css">
+	<link rel="stylesheet" href="resources/static/css/animate.css">
+	<link rel="stylesheet" href="resources/static/css/main.css">
+	<link rel="stylesheet" href="resources/static/css/responsive.css">
 	<link rel="stylesheet" href="resources/static/css/font.css">
 	<link rel="stylesheet" href="resources/static/css/reset.css">
-    <link rel="stylesheet" href="resources/static/css/reservation.css">
+	<link rel="stylesheet" href="resources/static/css/font-awesome.min.css">
+	<link rel="stylesheet" href="resources/static/css/coffee.css">
+	<link rel="stylesheet" href="resources/static/css/itemdetail.css">
+	<%--데이트피커--%>
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" />
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script src="http://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
 </head>
+<script>
+	/* 문서로딩시 제이쿼리 실행시작 */
+
+	var room;
+	$(function(){
+		/*
+		$('.big-calendar').hide(); // 캘린더 숨기기(기본)
+		// 캘린더 보이고 끄기
+		$('.small-calendar').click(function(){
+			$('.big-calendar').show();
+		})
+		$('.close-calendar').click(function(){
+			$('.big-calendar').hide();
+		})
+		 */
+
+		// 방이미지 슬라이드 보기
+		var bigPic = document.querySelector("#cup");
+		console.log(bigPic);
+		var smallPic = document.querySelectorAll(".small");
+		console.log(smallPic);
+		function changePic(){
+			var newPic = this.src;
+			console.log("작은이미지 클릭시" + newPic);
+			bigPic.setAttribute("src",newPic);
+		}
+		var i;
+		for(i=0; i<smallPic.length; i++){
+			smallPic[i].addEventListener("click",changePic);
+		}
+
+		// 커스텀중
+		var cur_room="room1";
+		var margin=0;
+		var sw=true;
+		var listcnt=0;
+		var curimgnum=0;
+		var slidesw=true;
+		var pay;
+
+		function checkout_room(room){
+
+			$('.remaining_table').html('<tr><th>번호</th>');
+			$('.remaining_table tr').append('<th>객실명</th>');
+			$('.remaining_table tr').append('<th>날짜</th>');
+			$('.remaining_table tr').append('<th>남은객실</th></tr>');
+
+			if(room[0].room_type=="room1"){
+				type="스텐다드";
+			}else if(room[0].room_type=="room2"){
+				type="슈페리어";
+			}else{
+				type="디럭스";
+			}
+			for(var i=0; i<room.length;i++){
+
+				$('.remaining_table').append('<tr class="'+room[i].room_seq+'">');
+				$('.'+room[i].room_seq).append('<td>'+(i+1)+'</td>');
+				$('.'+room[i].room_seq).append('<td>'+type+'</td>');
+				$('.'+room[i].room_seq).append('<td>'+room[i].room_date+'</td>');
+				$('.'+room[i].room_seq).append('<td>'+room[i].room_rem+'</td>');
+				$('.remaining_table').append('</tr>');
+			}
+			$('.remaining_div').fadeIn('slow');
+		}
+
+		//계산기 기능
+		function carcur(){
+			var room=$('.room_select').text();
+			var days=staydate();
+			if(days==0)
+				days=1;
+
+			var person=0;
+			person=person_count();
+			console.log(person);
+			if(person>0){
+				if(room=='스텐다드'){
+
+					$('.stay_person').text("숙박인원 : "+person+"인");
+					$('.stay_room').text("스텐다드 룸 :"+Math.ceil(person/2)+"개");
+					$('.stay_date').text("머무는기간 : "+days+"일");
+					$('.stay_pay').text("가격은 총 "+Math.ceil(person/2)*10*days+"만원 입니다.");
+					$('.stay_pay').append("<br/><h4>이대로 결제하시겠어요?</h4>");
+
+				}else if(room=='슈페리어'){
+					if(person<4)
+						person=4;
+					$('.stay_person').text("숙박인원 : "+person+"인");
+					$('.stay_room').text("스텐다드 룸 :"+Math.ceil(person/2)+"개");
+					$('.stay_date').text("머무는기간 : "+days+"일");
+					$('.stay_pay').text("가격은 총 "+Math.ceil(person/4)*19*days+"만원 입니다.");
+					$('.stay_pay').append("<br/><h4>이대로 결제하시겠어요?</h4>");
+
+				}else{
+					if(person<8)
+						person=6;
+
+					$('.stay_person').text("숙박인원 : "+person+"인");
+					$('.stay_room').text("스텐다드 룸 :"+Math.ceil(person/2)+"개");
+					$('.stay_date').text("머무는기간 : "+days+"일");
+					$('.stay_pay').text("가격은 총 "+Math.ceil(person/8)*36*days+"만원 입니다.");
+					$('.stay_pay').append("<br/><h4>이대로 결제하시겠어요?</h4>");
+
+				}
+
+			}else{
+				alert("숙박인원이 1인 이상이어야 합니다");
+			}
+		}
+
+		//사람 수 체크 함수
+		function person_count(){
+			var person=$('.person_select').text();
+			if(person=='성인 2인'){
+				return 2;
+			}else if(person=='성인 3~4인'){
+				return 4;
+			}else if(person=='성인 5~6인'){
+				return 6;
+			}else{
+				return person;
+			}
+		}
+
+		// 머무르는 기간 함수
+		function staydate(){
+			var checkin_month=$('#checkin_date').val().substring(5,7);
+			var checkin_day=$('#checkin_date').val().substring(8,10);
+			var checkout_month=$('#checkout_date').val().substring(5,7);
+			var checkout_day=$('#checkout_date').val().substring(8,10);
+			var imsi=Number(checkout_day); //형변환 임시변수
+			var leftmargin=0; //슬라이드 마진 변수
+
+
+			if(checkin_month!=checkout_month){
+				if(checkin_month=='01'||checkin_month=='03'){
+
+					return 31-checkin_day+imsi;
+				}else if(checkin_month=='02'){
+					if($('#checkin_date').val().substring(0,4)%400==0){
+
+						return 29-checkin_day+imsi;
+
+					}else{
+
+						return 28-checkin_day+imsi;
+					}
+				}else{
+
+					return 30-checkin_day+imsi;
+				}
+			}else{
+				return checkout_day-checkin_day;
+			}
+
+
+		}
+
+		$('.remaining_div h3').click(function(){
+			$('.remaining_div').fadeOut();
+		})
+
+		//룸박스 토글
+		$('.person_select').click(function(){
+			$('.room_dropbox').hide();
+			$('.person_dropbox').toggle();
+		})
+		$('.person_dropbox div').click(function(){
+			$('.person_select').text($(this).text());
+			$('.person_dropbox').toggle();
+		})
+		$('.room_select').click(function(){
+			$('.person_dropbox').hide();
+			$('.room_dropbox').toggle();
+		})
+		$('.room_dropbox div').click(function(){
+			$('.room_select').text($(this).text());
+			$('.room_dropbox').toggle();
+		})
+
+
+
+		//데이트피커
+		$.datepicker.regional['ko'] = {
+			changeMonth: false,
+			dayNames: ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'],
+			dayNamesMin: ['월', '화', '수', '목', '금', '토', '일'],
+			monthNamesShort: ['1','2','3','4','5','6','7','8','9','10','11','12'],
+			monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+			dateFormat: "yy-mm-dd",
+			minDate:1,
+			maxDate:31, //오늘 기준 최대 선택 가능 날짜
+		};
+		$.datepicker.setDefaults($.datepicker.regional['ko']);
+		var currentDate = new Date();
+		currentDate.setDate(currentDate.getDate()+1);
+		$('#checkin_date').datepicker();
+		$("#checkout_date").datepicker( "option", "minDate", 31 );
+
+		$('#checkin_date').datepicker("option", "onClose", function ( selectedDate ) {
+			$("#checkout_date").datepicker( "option", "minDate", selectedDate );
+		});
+		$( "#checkin_date" ).datepicker( "setDate", currentDate);
+		$('#checkout_date').datepicker();
+		$('#checkout_date').datepicker("option", "minDate", $("#checkin_date").val());
+		$('#checkout_date').datepicker("option", "onClose", function ( selectedDate ) {
+			$("#checkin_date").datepicker( "option", "maxDate", selectedDate );
+		});
+
+
+		$( "#checkout_date" ).datepicker( "setDate", 2); // 체크아웃 선택 시 디폴트로 pocus 되는 날짜/ ex ( "setDate", 5) 는 오늘로부터 5일 뒤
+
+		//객실 예약 함수
+		function book_insert(room,days,book_checkin,person,needrooms){
+
+			var book_checkout=$('#checkout_date').val();
+			if(days==0)
+				days=1;
+
+			var pay;
+			if(room=='room1'){
+				pay=Math.ceil(person/2)*10*days
+			}else if(room=='room2'){
+				pay=Math.ceil(person/4)*19*days
+			}else{
+				pay=Math.ceil(person/8)*36*days
+			}
+			$.ajax({
+				url:'/bookinsert',
+				type:'post',
+				data:{'room':room,'pay':pay,'stay':days,'checkin':book_checkin,'checkout':book_checkout,'person':sessionid,'needrooms':needrooms},
+				success:function(result){
+					$('body').html(result);
+				}
+			})
+		}
+
+		//객실예약
+		$(document).on('click','.room_submit',function(){
+			$('.modal').fadeIn('slow');
+			carcur();
+		})
+		$('.ok').click(function(){
+			roomsubmit();
+		})
+		$('.no').click(function(){
+			$('.modal').fadeOut('slow');
+
+		})
+
+		//남은객실 확인
+		$('.remaining_btn').click(function(){
+			if(cur_room=="room4")
+				cur_room="room3";
+			$.ajax({
+				url:'/remainingrooms',
+				type:'post',
+				data:{'room':cur_room},
+				success:function(result){
+					checkout_room(result);
+				}
+			})
+		})
+
+		$('.person4').click(function(){
+			$('.person_select').toggle();
+			$('.toggle_person').toggle();
+		})
+
+		// 사람수 직접입력 기능
+		$('#person_input').keyup(function(){
+			if($('#person_input').val()>100){
+				$('#person_input').val(100);
+			}
+			$('.person_select').text($('#person_input').val());
+
+		})
+		//룸 선택 시 함수
+		function roomselect(data){
+			slidesw=true;
+			$('.imgbox').text("");
+			$('.slider').text("");
+			$.ajax({
+				url:'/roomselect',
+				type:'post',
+				data:{'room':data},
+				dataType:'json',
+				success:function(result){
+					listcnt=result.length;
+					for(var i=0;i<result.length;i++){
+						$('.imgbox').append('<img src="../img/'+data+'/'+result[i]+'">');
+						$('.slider').append('<img id="'+i+'" src="../img/'+data+'/'+result[i]+'">');
+
+						if(i==0){
+							$('#'+curimgnum).attr('class','active_img');
+						}
+					}
+				}
+			})
+		}
+
+		//기본 룸 세팅
+		roomselect("room1");
+		//룸 선택 버튼 클릭 함수
+		$('.btn_box button').click(function(){
+			$('.btn_box button').css({'background':'#2c4162'});
+			$(this).css({'background':'salmon'});
+			margin=0;
+			$('.imgbox').stop().animate({'margin-left':margin+'%'},500);
+			cur_room=$(this).prop('id');
+			curimgnum=0;
+			roomselect(cur_room);
+			$('.remaining_div').fadeOut('slow');
+
+
+		});
+
+		// 숙박일 계산(처음로딩시)
+		const checkIn = $("#checkin_date").val();
+		const checkOut = $("#checkout_date").val();
+		const getDateDiff = (d1, d2) => {
+			const date1 = new Date(d1);
+			const date2 = new Date(d2);
+			const diffDate = date1.getTime() - date2.getTime();
+			return Math.abs(diffDate / (1000 * 60 * 60 * 24)); // 밀리세컨 * 초 * 분 * 시 = 일
+		}
+		// n박 출력
+		$('.nightNum').html(getDateDiff(checkIn, checkOut)+'박');
+
+		// 체크인, 체크아웃 날짜 변경시
+		$( '#checkin_date, #checkout_date' ).change(function() {
+			const newCheckIn = $( '#checkin_date' ).val();
+			const newCheckOut = $( '#checkout_date' ).val();
+			const getDateDiff = (d1, d2) => {
+				const date1 = new Date(d1);
+				const date2 = new Date(d2);
+				const diffDate = date1.getTime() - date2.getTime();
+				return Math.abs(diffDate / (1000 * 60 * 60 * 24)); // 밀리세컨 * 초 * 분 * 시 = 일
+			}
+			// n박 출력
+			$('.nightNum').html(getDateDiff(newCheckIn, newCheckOut)+'박');
+		});
+
+		// 미완성 - 객실선택마다 총합계인데 String으로 돼있어서 애매함
+		const room201 = $('.cost-80000').val();
+		const room202 = $('.cost-90000').val();
+		const room203 = $('.cost-100000').val();
+
+		$('.cost-80000').click(function(){
+			// alert('1');
+			//getDateDiff(newCheckIn, newCheckOut);
+			$('.totalPayment').html(room201);
+		})
+		$('.cost-90000').click(function(){
+			// alert('2');
+			$('.totalPayment').html(room202);
+		})
+		$('.cost-100000').click(function(){
+			// alert('3');
+			$('.totalPayment').html(room203);
+		})
+
+
+	});
+
+	/* 문서로딩시 제이쿼리 실행끝 */
+
+
+</script>
 <body>
-	<section>
-		<div class="container">
-            <div class="jss3">
-                <div class="jss4">
-                    <div>
-                        <button class="jss7">
-                            <img class="jss144" src="resources/static/images/backleft.svg" alt="drag">
-                            <span>뒤로가기</span>
-                        </button>
-                    </div>
-                    <div class="jss5">예약결제</div>
-                    <div class="jss6">
-                        <img src="https://via.placeholder.com/67x23" width="67" height="23" alt="">
-                    </div>
-                </div>
-            </div>
-            <div class="MuiGrid-root jss1 MuiGrid-container">
-                <div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12">
-                    <div>
-                        <h3 class="jss36">선택객실목록</h3>
-                        <div class="jss37">
-                            <div class="jss8">
-                                <div class="jss9">
-                                    <div class="jss10">
-                                        <div>객실명</div>
-                                        <div>이용일</div>
-                                        <div>인원</div>
-                                        <div>요금타입</div>
-                                        <div>이용요금</div>
-                                        <div>결제금액</div>
-                                    </div>
-                                </div>
-                                <ul class="jss11">
-                                    <li>
-                                        <div class="jss12">
-                                            <div class="jss13 jss24">
-                                                <div class="jss14">202호</div>
-                                                <div class="jss15">기준 : 2명 / 최대 : 2명</div>
-                                            </div>
-                                            <div></div>
-                                        </div>
-                                        <div class="jss12" data-item-title="이용일">
-                                            <div class="jss13">
-                                                <span class="jss21">
-                                                    2023-07-06
-                                                    (
-                                                    목
-                                                    )
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="jss12" data-item-title="인원">
-                                            <div class="jss13">
-                                                성인
-                                                2
-                                                <span> / </span>
-                                                아동
-                                                0
-                                                <span> / </span>
-                                                유아
-                                                0
-                                            </div>
-                                        </div>
-                                        <div class="jss12" data-item-title="요금타입">
-                                            <div class="jss13">비수기/주중</div>
-                                        </div>
-                                        <div class="jss12" data-item-title="이용요금">
-                                            <div class="jss13 jss16">
-                                                <dl>
-                                                    <dt>기본가</dt>
-                                                    <dd>
-                                                        89,000
-                                                        원
-                                                    </dd>
-                                                </dl>
-                                            </div>
-                                        </div>
-                                        <div class="jss12" data-item-title="결제금액">
-                                            <div class="jss13 jss18">
-                                                <span>
-                                                    89,000
-                                                    원
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="jss20">
-                        총 금액
-                        <span class="jss21">89,000</span>
-                        원
-                    </div>
-                </div>
-                <div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-5">
-                    <div class="MuiGrid-root MuiGrid-item MuiGrid-grid-sm-12 MuiGrid-grid-md-6">
-                        <div>
-                            <h3 class="jss36">약관동의</h3>
-                            <div class="jss37">
-                                <div class="jss38">
-                                    <label class="MuiFormControlLabel-root">
-                                        <span class="MuiButtonBase-root MuiIconButton-root jss40 MuiCheckbox-root MuiCheckbox-colorPrimary MuiIconButton-colorPrimary" aria-disabled="false">
-                                            <span class="MuiIconButton-label">
-                                                <input type="checkbox" class="jss43" data-indeterminate="false" value>
-                                                <svg class="MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="presentation">
-                                                    <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path>
-                                                </svg>
-                                            </span>
-                                            <span class="MuiTouchRipple-root"></span>
-                                        </span>
-                                        <span class="MuiTypography-root MuiFormControlLabel-label MuiTypography-body1">전체동의</span>
-                                    </label>
-                                </div>
-                                <div class="jss38">
-                                    <label class="MuiFormControlLabel-root">
-                                        <span class="MuiButtonBase-root MuiIconButton-root jss40 MuiCheckbox-root MuiCheckbox-colorPrimary MuiIconButton-colorPrimary" aria-disabled="false">
-                                            <span class="MuiIconButton-label">
-                                                <input type="checkbox" class="jss43" data-indeterminate="false" value>
-                                                <svg class="MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="presentation">
-                                                    <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path>
-                                                </svg>
-                                            </span>
-                                            <span class="MuiTouchRipple-root"></span>
-                                        </span>
-                                        <span class="MuiTypography-root MuiFormControlLabel-label MuiTypography-body1">(필수) 이용시 유의사항에 동의</span>
-                                    </label>
-                                </div>
-                                <div class="jss39">
-                                    <div>
-                                        <div class="tui-editor-contents">
-                                            <p>
-                                                보호자 동반없는
-                                                <span style="color:#ff6c00">미성년자는 예약 및 입실 불가합니다.</span>
-                                            </p>
-                                            <p>
-                                                예약시 신청하신
-                                                <span style="color:#ff6c00">인원이외에 추가인원은 입실이 거부될 수 있습니다.</span>
-                                            </p>
-                                            <p>예약인원 초과로 인한 입실 거부시 환불도 되지 않으니 유의하시기 바랍니다.</p>
-                                            <p>예약후 펜션이나 객실 변경은 해당예약 취소후 다시 예약하셔야 합니다.</p>
-                                            <p>
-                                                예약변경을 위한
-                                                <span style="color:#ff6c00">취소시에도 취소수수료가 부과</span>
-                                                되오니 신중하게 예약하시기 바랍니다.
-                                            </p>
-                                            <p>최대인원이 2인인 커플전용룸의 경우 유아나 아동은 동반입실이 불가능합니다.</p>
-                                            <p>
-                                                <span style="color:#ff6c00">애완견 동반시 입실이 불가능</span>
-                                                합니다.
-                                            </p>
-                                            <p>퇴실 시에는 내집같이 정돈을 부탁 드립니다.</p>
-                                            <p>
-                                                <strong>
-                                                    <span style="color:#ff0000">각 객실 명시된 최대인원초과시 입실 및 이용불가하며 지인 및 방문객의 출입을 금하오니 이점 양해 부탁드립니다.</span>
-                                                </strong>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="jss38">
-                                    <label class="MuiFormControlLabel-root">
-                                        <span class="MuiButtonBase-root MuiIconButton-root jss40 MuiCheckbox-root MuiCheckbox-colorPrimary MuiIconButton-colorPrimary" aria-disabled="false">
-                                            <span class="MuiIconButton-label">
-                                                <input class="jss43" type="checkbox" data-indeterminate="false" value>
-                                                <svg class="MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="presentation">
-                                                    <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path>
-                                                </svg>
-                                            </span>
-                                            <span class="MuiTouchRipple-root"></span>
-                                        </span>
-                                        <span class="MuiTypography-root MuiFormControlLabel-label MuiTypography-body1">(필수) 취소수수료(예약시점과 무관한 이용일 기준)에 동의</span>
-                                    </label>
-                                </div>
-                                <div class="jss39">
-                                    <div class="jss33">
-                                        <p>예약취소는 구매한 사이트 "예약확인/취소" 에서 가능합니다.</p>
-                                        <p>취소수수료는 예약시점과는 무관한 <span class="jss31">이용시작일 기준</span>입니다.</p>
-                                        <p>환불시 <span class="jss31">결제하신 금액에서 취소수수료를 제외한 금액을 환불</span>해 드립니다.</p>
-                                        <p>취소수수료는 결제금액이 아닌 예약금(객실요금+기타옵션요금) 기준으로 책정됩니다.</p>
-                                        <p><span class="jss31">취소수수료가 100% 인 경우 전액 환불되지 않습니다.</span></p>
-                                        <p>수수료 내역은 아래와 같습니다.</p>
-                                    </div>
-                                    <table class="jss29">
-                                        <colgroup>
-                                            <col>
-                                            <col>
-                                            <col>
-                                        </colgroup>
-                                        <thead>
-                                            <tr>
-                                                <th>기준</th>
-                                                <th>취소수수료</th>
-                                                <th>환불율(%)</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>이용일 <b>당일</b> 취소시</td>
-                                                <td>100%</td>
-                                                <td>환불없음</td>
-                                            </tr>
-                                            <tr>
-                                                <td>이용일 <b>1</b> 일전 취소시</td>
-                                                <td>70%</td>
-                                                <td>30% 환불</td>
-                                            </tr>
-                                            <tr>
-                                                <td>이용일 <b>2</b> 일전 취소시</td>
-                                                <td>50%</td>
-                                                <td>50% 환불</td>
-                                            </tr>
-                                            <tr>
-                                                <td>이용일 <b>3</b> 일전 취소시</td>
-                                                <td>30%</td>
-                                                <td>70% 환불</td>
-                                            </tr>
-                                            <tr>
-                                                <td>이용일 <b>4</b> 일전 취소시</td>
-                                                <td>20%</td>
-                                                <td>80% 환불</td>
-                                            </tr>
-                                            <tr>
-                                                <td>이용일 <b>5</b> 일전 취소시</td>
-                                                <td>15%</td>
-                                                <td>85% 환불</td>
-                                            </tr>
-                                            <tr>
-                                                <td>이용일 <b>6</b> 일전 취소시</td>
-                                                <td>10%</td>
-                                                <td>90% 환불</td>
-                                            </tr>
-                                            <tr>
-                                                <td>이용일 <b>7</b> 일전 취소시</td>
-                                                <td>0%</td>
-                                                <td>100% 환불</td>
-                                            </tr>
-                                            <tr class="jss30">
-                                                <td>기본 취소 수수료</td>
-                                                <td>0%</td>
-                                                <td>100% 환불</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="jss38">
-                                    <label class="MuiFormControlLabel-root">
-                                        <span class="MuiButtonBase-root MuiIconButton-root jss40 MuiCheckbox-root MuiCheckbox-colorPrimary MuiIconButton-colorPrimary" aria-disabled="false">
-                                            <span class="MuiIconButton-label"><input class="jss43" type="checkbox" data-indeterminate="false" value="">
-                                                <svg class="MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="presentation">
-                                                    <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path>
-                                                </svg>
-                                            </span>
-                                            <span class="MuiTouchRipple-root"></span>
-                                        </span>
-                                        <span class="MuiTypography-root MuiFormControlLabel-label MuiTypography-body1">(필수) 개인정보 수집 및 이용에 동의</span>
-                                    </label>
-                                </div>
-                                <div class="jss39">
-                                    <div class="jss28">
-                                        <div class="jss33">주식회사 김명호는 숙박 예약에 필요한 최소한의 개인정보를 수집하고 있으며 동의받은 목적 외 용도로 사용하지 않습니다.</div>
-                                        <div class="jss44 jss32 jss46">
-                                            <table class="MuiTable-root jss45">
-                                                <colgroup>
-                                                    <col style="width: 15%;">
-                                                    <col style="width: 35%;">
-                                                    <col style="width: 35%;">
-                                                    <col style="width: 15%;">
-                                                </colgroup>
-                                                <thead class="MuiTableHead-root jss48 jss49">
-                                                    <tr class="MuiTableRow-root">
-                                                        <th class="MuiTableCell-root MuiTableCell-head jss52 MuiTableCell-sizeSmall" scope="col">구분</th>
-                                                        <th class="MuiTableCell-root MuiTableCell-head jss52 MuiTableCell-sizeSmall" scope="col">수집∙이용목적</th>
-                                                        <th class="MuiTableCell-root MuiTableCell-head jss52 MuiTableCell-sizeSmall" scope="col">수집∙이용항목</th>
-                                                        <th class="MuiTableCell-root MuiTableCell-head jss52 MuiTableCell-sizeSmall" scope="col">보유 및 이용기간</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class="MuiTableBody-root jss56 jss57">
-                                                    <tr class="MuiTableRow-root">
-                                                        <td class="MuiTableCell-root MuiTableCell-body jss61 MuiTableCell-sizeSmall">예약자(구매자)</td>
-                                                        <td class="MuiTableCell-root MuiTableCell-body jss61 MuiTableCell-sizeSmall">서비스 이용 및 계약의 이행, 본인 확인, 부정 이용 방지와 불만처리 등 민원처리</td>
-                                                        <td class="MuiTableCell-root MuiTableCell-body jss61 MuiTableCell-sizeSmall">
-                                                            <div>필수 : 이름, 생년월일, 휴대전화번호</div>
-                                                            <div>선택 : 이메일</div>
-                                                        </td>
-                                                        <td class="MuiTableCell-root MuiTableCell-body jss61 MuiTableCell-sizeSmall">
-                                                            <span class="jss35">이용 종료 후 1년까지</span>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div class="mt2">※ 동의를 거부할 수 있으나 거부 시 숙박 예약이 제한될 수 있습니다</div>
-                                    </div>
-                                </div>
-                                <div class="jss38">
-                                    <label class="MuiFormControlLabel-root">
-                                        <span class="MuiButtonBase-root MuiIconButton-root jss40 MuiCheckbox-root MuiCheckbox-colorPrimary MuiIconButton-colorPrimary" aria-disabled="false">
-                                            <span class="MuiIconButton-label">
-                                                <input type="checkbox" class="jss43" data-indeterminate="false" value>
-                                                <svg class="MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="presentation">
-                                                    <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path>
-                                                </svg>
-                                            </span>
-                                            <span class="MuiTouchRipple-root"></span>
-                                        </span>
-                                        <span class="MuiTypography-root MuiFormControlLabel-label MuiTypography-body1">(필수) 개인정보 제3자제공에 동의</span>
-                                    </label>
-                                </div>
-                                <div class="jss39">
-                                    <div class="jss28">
-                                        <div class="jss33">주식회사 김명호는 숙박 예약에 필요한 최소한의 개인정보를 제공하고 있으며 동의받은 목적 외 용도로 제공하지 않습니다.</div>
-                                        <div class="jss44 jss32 jss46">
-                                            <table class="MuiTable-root jss45">
-                                                <colgroup>
-                                                    <col style="width: 15%;">
-                                                    <col style="width: 35%;">
-                                                    <col style="width: 35%;">
-                                                    <col style="width: 15%;">
-                                                </colgroup>
-                                                <thead class="MuiTableHead-root jss48 jss49">
-                                                    <tr class="MuiTableRow-root">
-                                                        <th class="MuiTableCell-root MuiTableCell-head jss52 MuiTableCell-sizeSmall" scope="col">제공받는 자</th>
-                                                        <th class="MuiTableCell-root MuiTableCell-head jss52 MuiTableCell-sizeSmall" scope="col">제공 목적</th>
-                                                        <th class="MuiTableCell-root MuiTableCell-head jss52 MuiTableCell-sizeSmall" scope="col">제공 정보</th>
-                                                        <th class="MuiTableCell-root MuiTableCell-head jss52 MuiTableCell-sizeSmall" scope="col">보유 및 이용기간</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class="MuiTableBody-root jss56 jss57">
-                                                    <tr class="MuiTableRow-root">
-                                                        <td class="MuiTableCell-root MuiTableCell-body jss61 MuiTableCell-sizeSmall">
-                                                            <span class="jss35">삼척 콩앤삐펜션</span>
-                                                        </td>
-                                                        <td class="MuiTableCell-root MuiTableCell-body jss61 MuiTableCell-sizeSmall">
-                                                            <span class="jss35">예약 상품의 서비스 제공 및 계약의 이행을 위한 본인확인 및 미성년자 여부 확인</span>
-                                                        </td>
-                                                        <td class="MuiTableCell-root MuiTableCell-body jss61 MuiTableCell-sizeSmall">예약자(이름, 생년월일, 휴대전화번호, 이메일)</td>
-                                                        <td class="MuiTableCell-root MuiTableCell-body jss61 MuiTableCell-sizeSmall">
-                                                            <span class="jss35">이용 종료 후 1년까지</span>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div class="mt2">※ 동의를 거부할 수 있으나 거부 시 숙박 예약이 제한될 수 있습니다</div>
-                                    </div>
-                                </div>
-                                <div class="jss38">
-                                    <label class="MuiFormControlLabel-root">
-                                        <span class="MuiButtonBase-root MuiIconButton-root jss40 MuiCheckbox-root MuiCheckbox-colorPrimary MuiIconButton-colorPrimary" aria-disabled="false">
-                                            <span class="MuiIconButton-label">
-                                                <input class="jss43" type="checkbox" data-indeterminate="false" value="">
-                                                <svg class="MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="presentation">
-                                                    <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path>
-                                                </svg>
-                                            </span>
-                                            <span class="MuiTouchRipple-root"></span>
-                                        </span>
-                                        <span class="MuiTypography-root MuiFormControlLabel-label MuiTypography-body1">(필수) 이용자가 미성년자가 아니며 성인임에 동의</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="MuiGrid-root MuiGrid-item MuiGrid-grid-sm-12 MuiGrid-grid-md-6">
-                        <div>
-                            <h3 class="jss36">예약정보입력</h3>
-                            <div class="jss37"><table class="MuiTable-root jss68">
-                                <tbody>
-                                    <tr>
-                                        <th style="padding-top: 24px;">예약자명 <i class="jss69">*</i></th>
-                                        <td style="padding-top: 16px;">
-                                            <div class="MuiFormControl-root MuiTextField-root jss71 jss75 MuiFormControl-marginNormal MuiFormControl-fullWidth">
-                                                <label class="MuiFormLabel-root MuiFormLabel-colorSecondary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-outlined" data-shrink="false">
-                                                    예약자명
-                                                </label>
-                                                <div class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorSecondary MuiOutlinedInput-colorSecondary MuiInputBase-fullWidth MuiInputBase-formControl">
-                                                    <input aria-invalid="false" type="text" class="MuiInputBase-input MuiOutlinedInput-input" value="">
-                                                    <fieldset aria-hidden="true" class="jss77 MuiOutlinedInput-notchedOutline" style="padding-left: 30.375px;">
-                                                        <legend class="jss78" style="width: 0.01px;">
-                                                            <span>&ZeroWidthSpace;</span>
-                                                        </legend>
-                                                    </fieldset>
-                                                </div>
-                                            </div>
-                                            <div class="jss76">예약자 실명을 입력하세요. 예약 확인시 혼동될 수 있습니다.</div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>생년월일 <i class="jss69">*</i></th>
-                                        <td>
-                                            <div class="MuiFormControl-root MuiTextField-root jss71 jss75 MuiFormControl-marginNormal MuiFormControl-fullWidth">
-                                                <label class="MuiFormLabel-root MuiFormLabel-colorSecondary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-outlined" data-shrink="false">
-                                                    생년월일
-                                                </label>
-                                                <div class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorSecondary MuiOutlinedInput-colorSecondary MuiInputBase-fullWidth MuiInputBase-formControl">
-                                                    <input aria-invalid="false" type="text" class="MuiInputBase-input MuiOutlinedInput-input" value="">
-                                                    <fieldset aria-hidden="true" class="jss77 MuiOutlinedInput-notchedOutline" style="padding-left: 30.375px;">
-                                                        <legend class="jss78" style="width: 0.01px;">
-                                                            <span>&ZeroWidthSpace;</span>
-                                                        </legend>
-                                                    </fieldset>
-                                                </div>
-                                            </div>
-                                            <div class="jss76">올바른 생년월일(예) 920123을 입력해주세요</div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>연락처 <i class="jss69">*</i></th>
-                                        <td>
-                                            <div class="MuiGrid-root jss86 jss79 MuiGrid-container MuiGrid-spacing-xs-2">
-                                                <div class="MuiGrid-root jss80 jss81 MuiGrid-item MuiGrid-grid-sm-4">
-                                                    <div class="MuiFormControl-root MuiTextField-root jss87 jss89 MuiFormControl-marginDense MuiFormControl-fullWidth">
-                                                        <div class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorSecondary MuiOutlinedInput-colorSecondary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-marginDense MuiOutlinedInput-marginDense">
-                                                            <div class="MuiSelect-root MuiSelect-select MuiSelect-selectMenu MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSelect MuiOutlinedInput-inputSelect MuiInputBase-inputMarginDense MuiOutlinedInput-inputMarginDense" tabindex="0" role="button" aria-labelledby=" " aria-haspopup="listbox">010</div>
-                                                            <input type="hidden" data-id="" value="010">
-                                                            <svg class="MuiSvgIcon-root MuiSelect-icon MuiSelect-iconOutlined" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="presentation">
-                                                                <path d="M7 10l5 5 5-5z"></path>
-                                                            </svg>
-                                                            <fieldset aria-hidden="true" class="jss77 MuiOutlinedInput-notchedOutline" style="padding-left: 8px;">
-                                                                <legend class="jss78" style="width: 0px;">
-                                                                    <span>&ZeroWidthSpace;</span>
-                                                                </legend>
-                                                            </fieldset>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="MuiGrid-root jss80 jss81 MuiGrid-item MuiGrid-grid-sm-4">
-                                                    <div class="MuiFormControl-root MuiTextField-root jss71 jss75 MuiFormControl-marginNormal MuiFormControl-fullWidth">
-                                                        <div class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorSecondary MuiOutlinedInput-colorSecondary Mui-error Mui-error MuiInputBase-fullWidth MuiInputBase-formControl">
-                                                            <input aria-invalid="true" type="text" class="MuiInputBase-input MuiOutlinedInput-input" value="">
-                                                            <fieldset aria-hidden="true" class="jss77 MuiOutlinedInput-notchedOutline" style="padding-left: 8px;">
-                                                                <legend class="jss78" style="width: 0.01px;">
-                                                                    <span>&ZeroWidthSpace;</span>
-                                                                </legend>
-                                                            </fieldset>
-                                                        </div>
-                                                        <p class="MuiFormHelperText-root MuiFormHelperText-contained Mui-error">올바른 연락처를 입력해주세요.</p>
-                                                    </div>
-                                                </div>
-                                                <div class="MuiGrid-root jss80 jss81 MuiGrid-item MuiGrid-grid-sm-4">
-                                                    <div class="MuiFormControl-root MuiTextField-root jss71 jss75 MuiFormControl-marginNormal MuiFormControl-fullWidth">
-                                                        <div class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorSecondary MuiOutlinedInput-colorSecondary Mui-error Mui-error MuiInputBase-fullWidth MuiInputBase-formControl">
-                                                            <input aria-invalid="true" type="text" class="MuiInputBase-input MuiOutlinedInput-input" value="">
-                                                            <fieldset aria-hidden="true" class="jss77 MuiOutlinedInput-notchedOutline" style="padding-left: 8px;">
-                                                                <legend class="jss78" style="width: 0.01px;">
-                                                                    <span>&ZeroWidthSpace;</span>
-                                                                </legend>
-                                                            </fieldset>
-                                                        </div>
-                                                        <p class="MuiFormHelperText-root MuiFormHelperText-contained Mui-error">올바른 연락처를 입력해주세요.</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="jss85">예약관련 문자가 전송됩니다.</div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>비상연락처</th>
-                                        <td>
-                                            <div class="MuiGrid-root jss86 jss79 MuiGrid-container MuiGrid-spacing-xs-2">
-                                                <div class="MuiGrid-root jss80 jss81 MuiGrid-item MuiGrid-grid-sm-4">
-                                                    <div class="MuiFormControl-root MuiTextField-root jss87 jss89 MuiFormControl-marginDense MuiFormControl-fullWidth">
-                                                        <div class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorSecondary MuiOutlinedInput-colorSecondary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-marginDense MuiOutlinedInput-marginDense">
-                                                            <div class="MuiSelect-root MuiSelect-select MuiSelect-selectMenu MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSelect MuiOutlinedInput-inputSelect MuiInputBase-inputMarginDense MuiOutlinedInput-inputMarginDense" tabindex="0" role="button" aria-labelledby=" " aria-haspopup="listbox">010</div>
-                                                            <input type="hidden" data-id="" value="010">
-                                                            <svg class="MuiSvgIcon-root MuiSelect-icon MuiSelect-iconOutlined" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="presentation">
-                                                                <path d="M7 10l5 5 5-5z"></path>
-                                                            </svg>
-                                                            <fieldset aria-hidden="true" class="jss77 MuiOutlinedInput-notchedOutline" style="padding-left: 8px;">
-                                                                <legend class="jss78" style="width: 0px;">
-                                                                    <span>&ZeroWidthSpace;</span>
-                                                                </legend>
-                                                            </fieldset>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="MuiGrid-root jss80 jss81 MuiGrid-item MuiGrid-grid-sm-4">
-                                                    <div class="MuiFormControl-root MuiTextField-root jss71 jss75 MuiFormControl-marginNormal MuiFormControl-fullWidth">
-                                                        <div class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorSecondary MuiOutlinedInput-colorSecondary MuiInputBase-fullWidth MuiInputBase-formControl">
-                                                            <input aria-invalid="false" type="text" class="MuiInputBase-input MuiOutlinedInput-input" value="">
-                                                            <fieldset aria-hidden="true" class="jss77 MuiOutlinedInput-notchedOutline" style="padding-left: 8px;">
-                                                                <legend class="jss78" style="width: 0.01px;">
-                                                                    <span>&ZeroWidthSpace;</span>
-                                                                </legend>
-                                                            </fieldset>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="MuiGrid-root jss80 jss81 MuiGrid-item MuiGrid-grid-sm-4">
-                                                    <div class="MuiFormControl-root MuiTextField-root jss71 jss75 MuiFormControl-marginNormal MuiFormControl-fullWidth">
-                                                        <div class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorSecondary MuiOutlinedInput-colorSecondary MuiInputBase-fullWidth MuiInputBase-formControl">
-                                                            <input aria-invalid="false" type="text" class="MuiInputBase-input MuiOutlinedInput-input" value="">
-                                                            <fieldset aria-hidden="true" class="jss77 MuiOutlinedInput-notchedOutline" style="padding-left: 8px;">
-                                                                <legend class="jss78" style="width: 0.01px;">
-                                                                    <span>&ZeroWidthSpace;</span>
-                                                                </legend>
-                                                            </fieldset>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>이메일</th>
-                                        <td>
-                                            <div class="MuiFormControl-root MuiTextField-root jss71 MuiFormControl-marginDense MuiFormControl-fullWidth">
-                                                <label class="MuiFormLabel-root MuiFormLabel-colorSecondary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-marginDense MuiInputLabel-outlined" data-shrink="false">이메일</label>
-                                                <div class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorSecondary MuiOutlinedInput-colorSecondary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-marginDense MuiOutlinedInput-marginDense">
-                                                    <input aria-invalid="false" type="text" class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMarginDense MuiOutlinedInput-inputMarginDense" value="">
-                                                    <fieldset aria-hidden="true" class="jss77 MuiOutlinedInput-notchedOutline" style="padding-left: 25.875px;">
-                                                        <legend class="jss78" style="width: 0.01px;">
-                                                            <span>&ZeroWidthSpace;</span>
-                                                        </legend>
-                                                    </fieldset>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>예약요청사항</th>
-                                        <td>
-                                            <div class="MuiFormControl-root MuiTextField-root jss71 MuiFormControl-marginNormal MuiFormControl-fullWidth">
-                                                <label class="MuiFormLabel-root MuiFormLabel-colorSecondary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-outlined" data-shrink="false">요청사항(최대 125자/한글)</label>
-                                                <div class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorSecondary MuiOutlinedInput-colorSecondary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-multiline MuiOutlinedInput-multiline">
-                                                    <textarea aria-invalid="false" rows="4" class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline MuiOutlinedInput-inputMultiline"></textarea>
-                                                    <fieldset aria-hidden="true" class="jss77 MuiOutlinedInput-notchedOutline" style="padding-left: 67.875px;">
-                                                        <legend class="jss78" style="width: 0.01px;">
-                                                            <span>&ZeroWidthSpace;</span>
-                                                        </legend>
-                                                    </fieldset>
-                                                </div>
-                                                <p class="MuiFormHelperText-root MuiFormHelperText-contained">기타 업소측에 요청하실 사항을 입력하세요.</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="mt5"></div>
-                    <div>
-                        <div class="MuiGrid-root jss97 MuiGrid-container">
-                            <h3>결제정보</h3>
-                            <div class="jss113"></div>
-                        </div>
-                        <table class="MuiTable-root jss92">
-                            <tbody>
-                                <tr>
-                                    <th>총 결제 금액</th>
-                                    <td class="jss100">
-                                        <span class="jss101">89,000</span> 
-                                        원</td>
-                                    </tr>
-                                    <tr>
-                                        <th>결제 수단</th>
-                                        <td>
-                                            <div class="MuiFormGroup-root MuiFormGroup-row" role="radiogroup"><div>
-                                                <label class="MuiFormControlLabel-root">
-                                                    <span class="MuiButtonBase-root MuiIconButton-root jss145 MuiRadio-root MuiRadio-colorPrimary MuiIconButton-colorPrimary" aria-disabled="false">
-                                                        <span class="MuiIconButton-label">
-                                                            <input class="jss148" type="radio" value="card">
-                                                            <div class="jss149">
-                                                                <svg class="MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="presentation">
-                                                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"></path>
-                                                                </svg>
-                                                                <svg class="MuiSvgIcon-root jss150" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="presentation">
-                                                                    <path d="M8.465 8.465C9.37 7.56 10.62 7 12 7C14.76 7 17 9.24 17 12C17 13.38 16.44 14.63 15.535 15.535C14.63 16.44 13.38 17 12 17C9.24 17 7 14.76 7 12C7 10.62 7.56 9.37 8.465 8.465Z"></path>
-                                                                </svg>
-                                                            </div>
-                                                        </span>
-                                                        <span class="MuiTouchRipple-root"></span>
-                                                    </span>
-                                                    <span class="MuiTypography-root MuiFormControlLabel-label MuiTypography-body1">신용카드</span>
-                                                </label>
-                                            </div>
-                                            <div>
-                                                <label class="MuiFormControlLabel-root">
-                                                    <span class="MuiButtonBase-root MuiIconButton-root jss145 MuiRadio-root MuiRadio-colorPrimary MuiIconButton-colorPrimary" aria-disabled="false">
-                                                        <span class="MuiIconButton-label">
-                                                            <input class="jss148" type="radio" value="deposit">
-                                                            <div class="jss149">
-                                                                <svg class="MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="presentation">
-                                                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"></path>
-                                                                </svg>
-                                                                <svg class="MuiSvgIcon-root jss150" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="presentation">
-                                                                    <path d="M8.465 8.465C9.37 7.56 10.62 7 12 7C14.76 7 17 9.24 17 12C17 13.38 16.44 14.63 15.535 15.535C14.63 16.44 13.38 17 12 17C9.24 17 7 14.76 7 12C7 10.62 7.56 9.37 8.465 8.465Z"></path>
-                                                                </svg>
-                                                            </div>
-                                                        </span>
-                                                        <span class="MuiTouchRipple-root"></span>
-                                                    </span>
-                                                    <span class="MuiTypography-root MuiFormControlLabel-label MuiTypography-body1">무통장입금</span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div class="MuiGrid-root jss86 jss99 MuiGrid-container MuiGrid-spacing-xs-2">
-                            <div class="MuiGrid-root jss123 MuiGrid-item MuiGrid-grid-xs-6">
-                                <button class="MuiButtonBase-root MuiButton-root MuiButton-outlined jss127 jss132 jss126 MuiButton-outlinedSecondary MuiButton-outlinedSizeLarge MuiButton-sizeLarge MuiButton-fullWidth" tabindex="0" type="button">
-                                    <span class="MuiButton-label">
-                                        <span>취소(이전단계)</span>
-                                    </span>
-                                    <span class="MuiTouchRipple-root"></span>
-                                </button>
-                            </div>
-                            <div class="MuiGrid-root jss123 MuiGrid-item MuiGrid-grid-xs-6">
-                                <button class="MuiButtonBase-root MuiButton-root MuiButton-contained jss127 jss132 jss126 MuiButton-containedPrimary MuiButton-containedSizeLarge MuiButton-sizeLarge MuiButton-fullWidth" tabindex="0" type="button">
-                                    <span class="MuiButton-label">
-                                        <span>결제하기</span>
-                                    </span>
-                                    <span class="MuiTouchRipple-root"></span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<jsp:include page="common/header.jsp"/><!--header.jsp -->
+<section id="cart_items">
+	<div class="container">
+		<div class="jss20 bookingSection jss15">
+			<div class="MuiGrid-root jss21 sectionHeader MuiGrid-container">숙박기간</div>
+			<div class="MuiGrid-root jss22 sectionContainer MuiGrid-container">
+				<form class="jss99">
+					<div class="jss100">
+						<div class="jss101">
+							<svg class="MuiSvgIcon-root small-calendar" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="presentation">
+								<path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"></path>
+							</svg>
+						</div>
+						<div class="jss102">
+							<div class="MuiFormControl-root MuiTextField-root jss125 MuiFormControl-fullWidth">
+								<label class="MuiFormLabel-root MuiFormLabel-colorSecondary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined Mui-disabled Mui-disabled MuiFormLabel-filled" data-shrink="true">입실일</label>
+								<div class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorSecondary MuiOutlinedInput-colorSecondary MuiInputBase-fullWidth MuiInputBase-formControl">
+									<input type="text" aria-invalid="false" class="MuiInputBase-input MuiOutlinedInput-input"  name="checkin" id="checkin_date">
+									<fieldset aria-hidden="true" class="jss131 MuiOutlinedInput-notchedOutline" style="padding-left: 8px;">
+										<legend class="jss132" style="width: 55.25px;">
+											<span>&ZeroWidthSpace;</span>
+										</legend>
+									</fieldset>
+								</div>
+							</div>
+						</div>
+						<!-- n박표시 -->
+						<div class="jss105 nightNum jss103"></div>
+						<div class="jss102">
+							<div class="MuiFormControl-root MuiTextField-root jss125 MuiFormControl-fullWidth">
+								<label class="MuiFormLabel-root MuiFormLabel-colorSecondary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined Mui-disabled Mui-disabled MuiFormLabel-filled" data-shrink="true">퇴실일</label>
+								<div class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorSecondary MuiOutlinedInput-colorSecondary Mui-disabled Mui-disabled MuiInputBase-fullWidth MuiInputBase-formControl">
+									<input aria-invalid="false" type="text" class="MuiInputBase-input MuiOutlinedInput-input Mui-disabled Mui-disabled" name="checkout" id="checkout_date">
+									<fieldset aria-hidden="true" class="jss131 MuiOutlinedInput-notchedOutline" style="padding-left: 8px;">
+										<legend class="jss132" style="width: 55.25px;">
+											<span>&ZeroWidthSpace;</span>
+										</legend>
+									</fieldset>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
 		</div>
-	</section>
-<script src="resources/static/js/jquery.js"></script>
+		<div class="review-payment">
+			<h2>객실선택</h2>
+		</div>
+		<!-- 캘린더팝업(임시) -->
+		<!--<div class="jss106 big-calendar" tabindex="-1">
+			<div class="jss107">
+				<div class="jss108">
+					2023-06-23
+					~
+					2023-06-24
+					<span class="jss124">1박</span>
+				</div>
+				<div class="jss108 jss122"></div>
+				<div class="jss111">"입실일 선택후, 퇴실일을 선택해주세요."</div>
+				<button class="jss109">
+					<svg class="MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="presentation">
+						<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
+					</svg>
+				</button>
+			</div>
+			<div class="booking-date-picker-wrapper">
+				<div class="jss110">
+					<div role="application" aria-label="Calendar" class="DayPicker DayPicker_1 DayPicker__horizontal DayPicker__horizontal_2 DayPicker__withBorder DayPicker__withBorder_3" style="width: 605px;">
+						<div>
+							<div class style="width: 604px;">
+								<div class="DayPicker_weekHeaders DayPicker_weekHeaders_1 DayPicker_weekHeaders__horizontal DayPicker_weekHeaders__horizontal_2">
+									<div class="DayPicker_weekHeader DayPicker_weekHeader_1" style="left: 0px; padding: 0px 13px;">
+										<ul class="DayPicker_weekHeader_ul DayPicker_weekHeader_ul_1">
+											<li class="DayPicker_weekHeader_li DayPicker_weekHeader_li_1" style="width: 35px;"><small>일</small></li>
+											<li class="DayPicker_weekHeader_li DayPicker_weekHeader_li_1" style="width: 35px;"><small>월</small></li>
+											<li class="DayPicker_weekHeader_li DayPicker_weekHeader_li_1" style="width: 35px;"><small>화</small></li>
+											<li class="DayPicker_weekHeader_li DayPicker_weekHeader_li_1" style="width: 35px;"><small>수</small></li>
+											<li class="DayPicker_weekHeader_li DayPicker_weekHeader_li_1" style="width: 35px;"><small>목</small></li>
+											<li class="DayPicker_weekHeader_li DayPicker_weekHeader_li_1" style="width: 35px;"><small>금</small></li>
+											<li class="DayPicker_weekHeader_li DayPicker_weekHeader_li_1" style="width: 35px;"><small>토</small></li>
+										</ul>
+									</div>
+									<div class="DayPicker_weekHeader DayPicker_weekHeader_1" style="left: 293px; padding: 0px 13px;">
+										<ul class="DayPicker_weekHeader_ul DayPicker_weekHeader_ul_1">
+											<li class="DayPicker_weekHeader_li DayPicker_weekHeader_li_1" style="width: 35px;"><small>일</small></li>
+											<li class="DayPicker_weekHeader_li DayPicker_weekHeader_li_1" style="width: 35px;"><small>월</small></li>
+											<li class="DayPicker_weekHeader_li DayPicker_weekHeader_li_1" style="width: 35px;"><small>화</small></li>
+											<li class="DayPicker_weekHeader_li DayPicker_weekHeader_li_1" style="width: 35px;"><small>수</small></li>
+											<li class="DayPicker_weekHeader_li DayPicker_weekHeader_li_1" style="width: 35px;"><small>목</small></li>
+											<li class="DayPicker_weekHeader_li DayPicker_weekHeader_li_1" style="width: 35px;"><small>금</small></li>
+											<li class="DayPicker_weekHeader_li DayPicker_weekHeader_li_1" style="width: 35px;"><small>토</small></li>
+										</ul>
+									</div>
+								</div>
+								<div class="DayPicker_focusRegion DayPicker_focusRegion_1" role="region" tabindex="-1">
+									<div class="test DayPickerNavigation DayPickerNavigation_1 DayPickerNavigation__horizontal DayPickerNavigation__horizontal_2">
+										<div role="button" tabindex="0" class="DayPickerNavigation_button DayPickerNavigation_button_1 DayPickerNavigation_button__horizontal DayPickerNavigation_button__horizontal_2" aria-label="Move backward to switch to the previous month.">
+											<div></div>
+										</div>
+
+										<div role="button" tabindex="0" class="DayPickerNavigation_button DayPickerNavigation_button_1 DayPickerNavigation_button__horizontal DayPickerNavigation_button__horizontal_2" aria-label="Move forward to switch to the next month.">
+											<div></div>
+										</div>
+									</div>
+									<div class="DayPicker_transitionContainer DayPicker_transitionContainer_1 DayPicker_transitionContainer__horizontal DayPicker_transitionContainer__horizontal_2" style="width: 604px; height: 358px;">
+										<div class="CalendarMonthGrid CalendarMonthGrid_1 CalendarMonthGrid__horizontal CalendarMonthGrid__horizontal_2">
+											<div class="CalendarMonthGrid_month__horizontal CalendarMonthGrid_month__horizontal_1 CalendarMonthGrid_month__hideForAnimation CalendarMonthGrid_month__hideForAnimation_2 CalendarMonthGrid_month__hidden CalendarMonthGrid_month__hidden_3">
+												<div class="CalendarMonth CalendarMonth_1" data-visible="false" style="padding: 0px 13px;">
+													<div class="CalendarMonth_caption CalendarMonth_caption_1">
+														<strong>2023. 5</strong>
+													</div>
+													<table class="CalendarMonth_table CalendarMonth_table_1" role="presentation">
+														<tbody>
+														<tr>
+															<td></td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 월요일, 2023년 5월 1일" tabindex="-1" style="width: 38px; height: 37px;">1</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 화요일, 2023년 5월 2일" tabindex="-1" style="width: 38px; height: 37px;">2</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 수요일, 2023년 5월 3일" tabindex="-1" style="width: 38px; height: 37px;">3</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 목요일, 2023년 5월 4일" tabindex="-1" style="width: 38px; height: 37px;">4</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 금요일, 2023년 5월 5일" tabindex="-1" style="width: 38px; height: 37px;">5</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__lastDayOfWeek CalendarDay__lastDayOfWeek_4 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_5" role="button" aria-label="Not available. 토요일, 2023년 5월 6일" tabindex="-1" style="width: 38px; height: 37px;">6</td>
+														</tr>
+														<tr>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__firstDayOfWeek CalendarDay__firstDayOfWeek_4 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_5" role="button" aria-label="Not available. 일요일, 2023년 5월 7일" tabindex="-1" style="width: 38px; height: 37px;">7</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 월요일, 2023년 5월 8일" tabindex="-1" style="width: 38px; height: 37px;">8</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 화요일, 2023년 5월 9일" tabindex="-1" style="width: 38px; height: 37px;">9</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 수요일, 2023년 5월 10일" tabindex="-1" style="width: 38px; height: 37px;">10</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 목요일, 2023년 5월 11일" tabindex="-1" style="width: 38px; height: 37px;">11</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 금요일, 2023년 5월 12일" tabindex="-1" style="width: 38px; height: 37px;">12</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__lastDayOfWeek CalendarDay__lastDayOfWeek_4 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_5" role="button" aria-label="Not available. 토요일, 2023년 5월 13일" tabindex="-1" style="width: 38px; height: 37px;">13</td>
+														</tr>
+														<tr>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__firstDayOfWeek CalendarDay__firstDayOfWeek_4 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_5" role="button" aria-label="Not available. 일요일, 2023년 5월 14일" tabindex="-1" style="width: 38px; height: 37px;">14</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 월요일, 2023년 5월 15일" tabindex="-1" style="width: 38px; height: 37px;">15</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 화요일, 2023년 5월 16일" tabindex="-1" style="width: 38px; height: 37px;">16</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 수요일, 2023년 5월 17일" tabindex="-1" style="width: 38px; height: 37px;">17</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 목요일, 2023년 5월 18일" tabindex="-1" style="width: 38px; height: 37px;">18</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 금요일, 2023년 5월 19일" tabindex="-1" style="width: 38px; height: 37px;">19</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__lastDayOfWeek CalendarDay__lastDayOfWeek_4 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_5" role="button" aria-label="Not available. 토요일, 2023년 5월 20일" tabindex="-1" style="width: 38px; height: 37px;">20</td>
+														</tr>
+														<tr>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__firstDayOfWeek CalendarDay__firstDayOfWeek_4 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_5" role="button" aria-label="Not available. 일요일, 2023년 5월 21일" tabindex="-1" style="width: 38px; height: 37px;">21</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 월요일, 2023년 5월 22일" tabindex="-1" style="width: 38px; height: 37px;">22</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 화요일, 2023년 5월 23일" tabindex="-1" style="width: 38px; height: 37px;">23</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 수요일, 2023년 5월 24일" tabindex="-1" style="width: 38px; height: 37px;">24</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 목요일, 2023년 5월 25일" tabindex="-1" style="width: 38px; height: 37px;">25</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 금요일, 2023년 5월 26일" tabindex="-1" style="width: 38px; height: 37px;">26</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__lastDayOfWeek CalendarDay__lastDayOfWeek_4 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_5" role="button" aria-label="Not available. 토요일, 2023년 5월 27일" tabindex="-1" style="width: 38px; height: 37px;">27</td>
+														</tr>
+														<tr>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__firstDayOfWeek CalendarDay__firstDayOfWeek_4 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_5" role="button" aria-label="Not available. 일요일, 2023년 5월 28일" tabindex="-1" style="width: 38px; height: 37px;">28</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 월요일, 2023년 5월 29일" tabindex="-1" style="width: 38px; height: 37px;">29</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 화요일, 2023년 5월 30일" tabindex="-1" style="width: 38px; height: 37px;">30</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 수요일, 2023년 5월 31일" tabindex="-1" style="width: 38px; height: 37px;">31</td>
+															<td></td>
+															<td></td>
+															<td></td>
+														</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+											<div class="CalendarMonthGrid_month__horizontal CalendarMonthGrid_month__horizontal_1">
+												<div class="CalendarMonth CalendarMonth_1" data-visible="true" style="padding: 0px 13px;">
+													<div class="CalendarMonth_caption CalendarMonth_caption_1">
+														<strong>2023. 6</strong>
+													</div>
+													<table class="CalendarMonth_table CalendarMonth_table_1" role="presentation">
+														<tbody>
+														<tr>
+															<td></td>
+															<td></td>
+															<td></td>
+															<td></td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 목요일, 2023년 6월 1일" tabindex="-1" style="width: 38px; height: 37px;">1</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 금요일, 2023년 6월 2일" tabindex="-1" style="width: 38px; height: 37px;">2</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__lastDayOfWeek CalendarDay__lastDayOfWeek_4 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_5" role="button" aria-label="Not available. 토요일, 2023년 6월 3일" tabindex="-1" style="width: 38px; height: 37px;">3</td>
+														</tr>
+														<tr>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__firstDayOfWeek CalendarDay__firstDayOfWeek_4 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_5" role="button" aria-label="Not available. 일요일, 2023년 6월 4일" tabindex="-1" style="width: 38px; height: 37px;">4</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 월요일, 2023년 6월 5일" tabindex="-1" style="width: 38px; height: 37px;">5</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 화요일, 2023년 6월 6일" tabindex="-1" style="width: 38px; height: 37px;">6</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 수요일, 2023년 6월 7일" tabindex="-1" style="width: 38px; height: 37px;">7</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 목요일, 2023년 6월 8일" tabindex="-1" style="width: 38px; height: 37px;">8</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 금요일, 2023년 6월 9일" tabindex="-1" style="width: 38px; height: 37px;">9</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__lastDayOfWeek CalendarDay__lastDayOfWeek_4 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_5" role="button" aria-label="Not available. 토요일, 2023년 6월 10일" tabindex="-1" style="width: 38px; height: 37px;">10</td>
+														</tr>
+														<tr>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__firstDayOfWeek CalendarDay__firstDayOfWeek_4 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_5" role="button" aria-label="Not available. 일요일, 2023년 6월 11일" tabindex="-1" style="width: 38px; height: 37px;">11</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 월요일, 2023년 6월 12일" tabindex="-1" style="width: 38px; height: 37px;">12</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 화요일, 2023년 6월 13일" tabindex="-1" style="width: 38px; height: 37px;">13</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 수요일, 2023년 6월 14일" tabindex="-1" style="width: 38px; height: 37px;">14</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 목요일, 2023년 6월 15일" tabindex="-1" style="width: 38px; height: 37px;">15</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_4" role="button" aria-label="Not available. 금요일, 2023년 6월 16일" tabindex="-1" style="width: 38px; height: 37px;">16</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__lastDayOfWeek CalendarDay__lastDayOfWeek_4 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_5" role="button" aria-label="Not available. 토요일, 2023년 6월 17일" tabindex="-1" style="width: 38px; height: 37px;">17</td>
+														</tr>
+														<tr>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__defaultCursor CalendarDay__defaultCursor_2 CalendarDay__default CalendarDay__default_3 CalendarDay__firstDayOfWeek CalendarDay__firstDayOfWeek_4 CalendarDay__blocked_out_of_range CalendarDay__blocked_out_of_range_5" role="button" aria-label="Not available. 일요일, 2023년 6월 18일" tabindex="-1" style="width: 38px; height: 37px;">18</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2 CalendarDay__today CalendarDay__today_3" role="button" aria-label="Choose 월요일, 2023년 6월 19일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">19</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 화요일, 2023년 6월 20일 as your check-in date. It's available." tabindex="-1" style="width: 38px; height: 37px;">20</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 수요일, 2023년 6월 21일 as your check-in date. It's available." tabindex="-1" style="width: 38px; height: 37px;">21</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 목요일, 2023년 6월 22일 as your check-in date. It's available." tabindex="-1" style="width: 38px; height: 37px;">22</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2 CalendarDay__selected_span CalendarDay__selected_span_3 CalendarDay__last_in_range CalendarDay__last_in_range_4 CalendarDay__selected_start CalendarDay__selected_start_5 CalendarDay__selected CalendarDay__selected_6" role="button" aria-label="Selected. 금요일, 2023년 6월 23일" tabindex="0" style="width: 38px; height: 37px;">23</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2 CalendarDay__lastDayOfWeek CalendarDay__lastDayOfWeek_3 CalendarDay__selected_end CalendarDay__selected_end_4 CalendarDay__selected CalendarDay__selected_5" role="button" aria-label="Selected. 토요일, 2023년 6월 24일" tabindex="-1" style="width: 38px; height: 37px;">24</td>
+														</tr>
+														<tr>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2 CalendarDay__firstDayOfWeek CalendarDay__firstDayOfWeek_3" role="button" aria-label="Choose 일요일, 2023년 6월 25일 as your check-in date. It's available." tabindex="-1" style="width: 38px; height: 37px;">25</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 월요일, 2023년 6월 26일 as your check-in date. It's available." tabindex="-1" style="width: 38px; height: 37px;">26</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 화요일, 2023년 6월 27일 as your check-in date. It's available." tabindex="-1" style="width: 38px; height: 37px;">27</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 수요일, 2023년 6월 28일 as your check-in date. It's available." tabindex="-1" style="width: 38px; height: 37px;">28</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 목요일, 2023년 6월 29일 as your check-in date. It's available." tabindex="-1" style="width: 38px; height: 37px;">29</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 금요일, 2023년 6월 30일 as your check-in date. It's available." tabindex="-1" style="width: 38px; height: 37px;">30</td>
+															<td></td>
+														</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+											<div class="CalendarMonthGrid_month__horizontal CalendarMonthGrid_month__horizontal_1">
+												<div class="CalendarMonth CalendarMonth_1" data-visible="true" style="padding: 0px 13px;">
+													<div class="CalendarMonth_caption CalendarMonth_caption_1">
+														<strong>2023. 7</strong>
+													</div>
+													<table class="CalendarMonth_table CalendarMonth_table_1" role="presentation">
+														<tbody>
+														<tr>
+															<td></td>
+															<td></td>
+															<td></td>
+															<td></td>
+															<td></td>
+															<td></td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2 CalendarDay__lastDayOfWeek CalendarDay__lastDayOfWeek_3" role="button" aria-label="Choose 토요일, 2023년 7월 1일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">1</td>
+														</tr>
+														<tr>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2 CalendarDay__firstDayOfWeek CalendarDay__firstDayOfWeek_3" role="button" aria-label="Choose 일요일, 2023년 7월 2일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">2</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 월요일, 2023년 7월 3일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">3</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 화요일, 2023년 7월 4일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">4</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 수요일, 2023년 7월 5일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">5</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 목요일, 2023년 7월 6일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">6</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 금요일, 2023년 7월 7일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">7</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2 CalendarDay__lastDayOfWeek CalendarDay__lastDayOfWeek_3" role="button" aria-label="Choose 토요일, 2023년 7월 8일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">8</td>
+														</tr>
+														<tr>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2 CalendarDay__firstDayOfWeek CalendarDay__firstDayOfWeek_3" role="button" aria-label="Choose 일요일, 2023년 7월 9일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">9</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 월요일, 2023년 7월 10일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">10</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 화요일, 2023년 7월 11일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">11</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 수요일, 2023년 7월 12일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">12</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 목요일, 2023년 7월 13일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">13</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 금요일, 2023년 7월 14일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">14</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2 CalendarDay__lastDayOfWeek CalendarDay__lastDayOfWeek_3" role="button" aria-label="Choose 토요일, 2023년 7월 15일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">15</td>
+														</tr>
+														<tr>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2 CalendarDay__firstDayOfWeek CalendarDay__firstDayOfWeek_3" role="button" aria-label="Choose 일요일, 2023년 7월 16일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">16</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 월요일, 2023년 7월 17일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">17</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 화요일, 2023년 7월 18일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">18</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 수요일, 2023년 7월 19일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">19</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 목요일, 2023년 7월 20일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">20</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 금요일, 2023년 7월 21일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">21</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2 CalendarDay__lastDayOfWeek CalendarDay__lastDayOfWeek_3" role="button" aria-label="Choose 토요일, 2023년 7월 22일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">22</td>
+														</tr>
+														<tr>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2 CalendarDay__firstDayOfWeek CalendarDay__firstDayOfWeek_3" role="button" aria-label="Choose 일요일, 2023년 7월 23일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">23</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 월요일, 2023년 7월 24일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">24</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 화요일, 2023년 7월 25일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">25</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 수요일, 2023년 7월 26일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">26</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 목요일, 2023년 7월 27일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">27</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 금요일, 2023년 7월 28일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">28</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2 CalendarDay__lastDayOfWeek CalendarDay__lastDayOfWeek_3" role="button" aria-label="Choose 토요일, 2023년 7월 29일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">29</td>
+														</tr>
+														<tr>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2 CalendarDay__firstDayOfWeek CalendarDay__firstDayOfWeek_3" role="button" aria-label="Choose 일요일, 2023년 7월 30일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">30</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 월요일, 2023년 7월 31일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">31</td>
+															<td></td>
+															<td></td>
+															<td></td>
+															<td></td>
+															<td></td>
+														</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+											<div class="CalendarMonthGrid_month__horizontal CalendarMonthGrid_month__horizontal_1 CalendarMonthGrid_month__hidden CalendarMonthGrid_month__hidden_2">
+												<div class="CalendarMonth CalendarMonth_1" data-visible="false" style="padding: 0px 13px;">
+													<div class="CalendarMonth_caption CalendarMonth_caption_1">
+														<strong>2023. 8</strong>
+													</div>
+													<table class="CalendarMonth_table CalendarMonth_table_1" role="presentation">
+														<tbody>
+														<tr>
+															<td></td>
+															<td></td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 화요일, 2023년 8월 1일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">1</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 수요일, 2023년 8월 2일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">2</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 목요일, 2023년 8월 3일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">3</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 금요일, 2023년 8월 4일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">4</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2 CalendarDay__lastDayOfWeek CalendarDay__lastDayOfWeek_3" role="button" aria-label="Choose 토요일, 2023년 8월 5일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">5</td>
+														</tr>
+														<tr>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2 CalendarDay__firstDayOfWeek CalendarDay__firstDayOfWeek_3" role="button" aria-label="Choose 일요일, 2023년 8월 6일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">6</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 월요일, 2023년 8월 7일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">7</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 화요일, 2023년 8월 8일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">8</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 수요일, 2023년 8월 9일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">9</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 목요일, 2023년 8월 10일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">10</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 금요일, 2023년 8월 11일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">11</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2 CalendarDay__lastDayOfWeek CalendarDay__lastDayOfWeek_3" role="button" aria-label="Choose 토요일, 2023년 8월 12일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">12</td>
+														</tr>
+														<tr>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2 CalendarDay__firstDayOfWeek CalendarDay__firstDayOfWeek_3" role="button" aria-label="Choose 일요일, 2023년 8월 13일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">13</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 월요일, 2023년 8월 14일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">14</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2 CalendarDay__highlighted_calendar CalendarDay__highlighted_calendar_3" role="button" aria-label="Choose 화요일, 2023년 8월 15일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">15</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 수요일, 2023년 8월 16일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">16</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 목요일, 2023년 8월 17일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">17</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 금요일, 2023년 8월 18일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">18</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2 CalendarDay__lastDayOfWeek CalendarDay__lastDayOfWeek_3" role="button" aria-label="Choose 토요일, 2023년 8월 19일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">19</td>
+														</tr>
+														<tr>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2 CalendarDay__firstDayOfWeek CalendarDay__firstDayOfWeek_3" role="button" aria-label="Choose 일요일, 2023년 8월 20일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">20</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 월요일, 2023년 8월 21일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">21</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 화요일, 2023년 8월 22일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">22</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 수요일, 2023년 8월 23일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">23</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 목요일, 2023년 8월 24일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">24</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 금요일, 2023년 8월 25일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">25</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2 CalendarDay__lastDayOfWeek CalendarDay__lastDayOfWeek_3" role="button" aria-label="Choose 토요일, 2023년 8월 26일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">26</td>
+														</tr>
+														<tr>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2 CalendarDay__firstDayOfWeek CalendarDay__firstDayOfWeek_3" role="button" aria-label="Choose 일요일, 2023년 8월 27일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">27</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 월요일, 2023년 8월 28일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">28</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 화요일, 2023년 8월 29일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">29</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 수요일, 2023년 8월 30일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">30</td>
+															<td class="CalendarDay CalendarDay_1 CalendarDay__default CalendarDay__default_2" role="button" aria-label="Choose 목요일, 2023년 8월 31일 as your check-in date. It’s available." tabindex="-1" style="width: 38px; height: 37px;">31</td>
+															<td></td>
+															<td></td>
+														</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>-->
+		<!-- 캘린더팝업끝(임시) -->
+		<ul class="jss26 itemList">
+			<li>
+				<a class="jss28" href="#none">
+					<div><img src="https://via.placeholder.com/110x110" alt=""></div>
+					<div class="jss29">
+						<svg class="MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="presentation"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
+							<path d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z"></path>
+						</svg>
+					</div>
+				</a>
+				<div class="jss30 itemInfo">
+						<span class="jss137 jss135 jss134 jss149">
+							<i class="jss136">예약가능</i>
+						</span>
+					<div class="jss31 itemTitle">201호</div>
+					<div class="itemdetail">
+						<div>기준2명, 최대2명</div>
+						<div>원룸형 / 10평</div>
+					</div>
+				</div>
+				<div class="jss34">
+					<div class="jss35">
+						<input type="radio" id="room-144501" name="room-200" class="jss36 cost-80000" value="80000">
+						<label for="room-144501" class="jss37 selectItemLabel"><svg class="MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="presentation">
+							<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
+						</svg>
+							<span>선택</span>
+						</label>
+					</div>
+					<div class="jss38 priceArea">
+						<div class="jss42 cost">80,000원</div>
+					</div>
+				</div>
+			</li>
+			<li>
+				<a class="jss28" href="#none">
+					<div><img src="https://via.placeholder.com/110x110" alt=""></div>
+					<div class="jss29">
+						<svg class="MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="presentation"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
+							<path d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z"></path>
+						</svg>
+					</div>
+				</a>
+				<div class="jss30 itemInfo">
+						<span class="jss137 jss135 jss134 jss149">
+							<i class="jss136">예약가능</i>
+						</span>
+					<div class="jss31 itemTitle">202호</div>
+					<div class="itemdetail">
+						<div>기준2명, 최대3명</div>
+						<div>원룸형 / 12평</div>
+					</div>
+				</div>
+				<div class="jss34">
+					<div class="jss35">
+						<input type="radio" id="room-144502" name="room-200" class="jss36 cost-90000" value="90000">
+						<label for="room-144502" class="jss37 selectItemLabel"><svg class="MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="presentation">
+							<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
+						</svg>
+							<span>선택</span>
+						</label>
+					</div>
+					<div class="jss38 priceArea">
+						<div class="jss42 cost">90,000원</div>
+					</div>
+				</div>
+			</li>
+			<li>
+				<a class="jss28" href="#none">
+					<div><img src="https://via.placeholder.com/110x110" alt=""></div>
+					<div class="jss29">
+						<svg class="MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="presentation"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
+							<path d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z"></path>
+						</svg>
+					</div>
+				</a>
+				<div class="jss30 itemInfo">
+						<span class="jss137 jss135 jss134 jss149">
+							<i class="jss136">예약가능</i>
+						</span>
+					<div class="jss31 itemTitle">203호</div>
+					<div class="itemdetail">
+						<div>기준2명, 최대4명</div>
+						<div>원룸형 / 14평</div>
+					</div>
+				</div>
+				<div class="jss34">
+					<div class="jss35">
+						<input type="radio" id="room-144503" name="room-200" class="jss36 cost-100000" value="100000">
+						<label for="room-144503" class="jss37 selectItemLabel"><svg class="MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="presentation">
+							<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
+						</svg>
+							<span>선택</span>
+						</label>
+					</div>
+					<div class="jss38 priceArea">
+						<div class="jss42 cost">100,000원</div>
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+	<div class="jss20 bookingSection">
+		<div class="MuiGrid-root jss22 sectionContainer MuiGrid-container">
+			<div class="jss45"></div>
+		</div>
+	</div>
+	<div class="jss67 jss13">
+		<div class="jss68">
+			<div class="jss69">
+				<span class="jss72">총 결제금액 : </span>
+				<span class="jss70 totalPayment">0</span>원</div>
+			<button class="MuiButton-contained jss74 jss71 MuiButton-containedPrimary " tabindex="0" type="button" style="background-color:#ea1f62; color: white; border-radius:5px;">
+						<span class="MuiButton-label">
+							<span>예약 결제</span>
+						</span>
+				<span class="MuiTouchRipple-root"></span>
+			</button>
+		</div>
+	</div>
+	</div>
+</section> <!--/#cart_items-->
+<jsp:include page="common/footer.jsp"/><!--footer.jsp -->
 <script src="resources/static/js/bootstrap.min.js"></script>
 <script src="resources/static/js/jquery.scrollUp.min.js"></script>
 <script src="resources/static/js/price-range.js"></script>

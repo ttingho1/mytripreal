@@ -47,7 +47,7 @@
                     <input type="submit" class="input-box button" value="로그인">
                 </form>
                 <p>
-                    id: ttingho1@naver.com<br>
+                    id: test <br>
                     pw : 1234
                 </p>
             </div>
