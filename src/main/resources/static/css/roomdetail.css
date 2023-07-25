@@ -2676,6 +2676,7 @@ button {
   box-sizing: content-box;
   animation-name: MuiInputBase-keyframes-auto-fill-cancel;
   -webkit-tap-highlight-color: transparent;
+  font-size: 14px;
 }
 
 .jss26 li {
@@ -3613,5 +3614,5 @@ div {
   width: 100%;
   margin: 0 auto;
   padding: 30px 16px;
-  max-width: 1280px;
+  /*max-;*/
 }

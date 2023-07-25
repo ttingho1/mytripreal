@@ -27,4 +27,10 @@ public class RoomService {
         RoomVo roomVo = roomMapper.getRoomInfo(hashMap);
         return roomVo;
     }
+
+    // 빈 객실 모두 불러오기(결제확정여부 N)
+    public List<RoomVo> getEmptyRoomService(ModelMap mm){
+        List<RoomVo> roomVo = roomMapper.getEmptyRoom(mm);
+        return roomVo;
+    }
 }

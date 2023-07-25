@@ -43,6 +43,18 @@
     .roomInfoDetail h3 {
         margin: 20px 0 20px 0;
     }
+    /* 예약하러가기 버튼 */
+    .goReservBtn{
+        border: none;
+        width: 100%;
+        height: 100px;
+        line-height: 100px;
+        margin-top: 30px;
+        text-align: center;
+        font-size: 2.3rem;
+        background: #FE980F;
+        color: white;
+    }
 </style>
 <script>
     /* 문서로딩시 제이쿼리 실행시작 */
@@ -69,6 +81,12 @@
 
     });
 
+   
+
+
+
+
+
     /* 문서로딩시 제이쿼리 실행끝 */
 
 
@@ -88,6 +106,11 @@
                             전 객실 실내 자이글 바베큐와 전 객실 욕조와 스파를 이용할 수 있습니다.
                         </li>
                     </ul>
+                    <div class="goReservBtn">
+                        <label for="goReservation" />
+                            <a href="reservation" id="goReservation">예약하러가기</a>
+                    </div>
+                    <%--<input type="button" class="goReservBtn" value="예약하러가기" />--%>
                 </div>
             </div>
             <div class="col-sm-8">

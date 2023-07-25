@@ -38,7 +38,7 @@
                     <input type="password" name="password" id="password" placeholder="현재 비밀번호">
                     <div class="underline"></div>
                 </div>
-                <button type="submit" class="input-box button">확인</button>
+                <button type="" class="input-box button">확인</button>
             </form>
         </div>
     </section>

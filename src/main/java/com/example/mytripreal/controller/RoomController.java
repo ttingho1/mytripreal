@@ -7,7 +7,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 
@@ -46,15 +50,20 @@ public class RoomController {
 
     }
 
-    // 방 검색하고 선택해서 결제버튼
+    // 빈 객실 전체보기
     @GetMapping("reservation")
-    public String roomRerV(){
+    public String getRoomEmpty(ModelMap mm, HttpServletResponse response, HttpSession session) {
+        String userSession = session.getAttribute("userEmail") == null ? "" : session.getAttribute("userEmail").toString();
+        List<RoomVo> roomVo = roomService.getEmptyRoomService(mm);
+        mm.put("roomVo", roomVo);
+
         return "reservation";
     }
 
     // 최종결제
     @GetMapping("payment")
     public String payment(){
+
         return "payment";
     }
 

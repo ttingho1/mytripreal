@@ -24,7 +24,8 @@ public class RoomVo {
     private String detail_image1; // 객실상세설명 사진1
     private String detail_image2; // 객실상세설명 사진2
     private String detail_image3; // 객실상세설명 사진3
-    private Date create_dt; // 데이터 생성일
-    private Date update_dt; // 데이터 수정일
+    private Date checkin; // 체크인 날짜
+    private Date checkout; // 체크아웃 날짜
+    private String confirm_yn; // 결제확정여부
 
 }

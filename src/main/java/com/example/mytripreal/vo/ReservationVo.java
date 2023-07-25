@@ -18,6 +18,6 @@ public class ReservationVo {
     private String confirm_yn; // 결제 확정여부
     private String cancel_yn; // 결제 취소여부
     private String refund_yn; // 결제 환불영부
-    private Date create_dt; // 데이터 생성일
-    private Date update_dt; // 데이터 수정일
+    private Date checkin; // 데이터 생성일
+    private Date checkout; // 데이터 수정일
 }
