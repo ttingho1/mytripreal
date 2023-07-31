@@ -1,17 +1,22 @@
 package com.example.mytripreal.controller;
 
 import com.example.mytripreal.service.RoomService;
+import com.example.mytripreal.service.UserService;
 import com.example.mytripreal.vo.RoomVo;
+
+import com.example.mytripreal.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,6 +25,9 @@ public class RoomController {
 
     @Autowired
     private RoomService roomService;
+
+    @Autowired
+    private UserService userService;
 
     // 메인페이지 - 객실미리보기(모든객실가져오기)
     @GetMapping("/")
@@ -35,13 +43,10 @@ public class RoomController {
 
     // 방 상세정보 보기
     @GetMapping("roomDetail")
-    public String roomDetail(HttpServletRequest request, ModelMap mm, int room_no){
+    public String roomDetail(HttpServletRequest request, ModelMap mm, String room_no){
 //      int room_no = Integer.parseInt(request.getParameter("room_no"));
-        HashMap hashMap = new HashMap();
 
-        // 사용자가 객실보기버튼을 클릭해서 값을 서비스로 보내기위한 room_no
-        hashMap.put("room_no", room_no);
-        RoomVo roomVo = roomService.roomDetailService(hashMap);
+        RoomVo roomVo = roomService.getRoomInfo(room_no);
         // 서비스로부터 받아온 room의 정보를 roomVo에 담음
         mm.put("roomVo", roomVo);
 
@@ -60,9 +65,29 @@ public class RoomController {
         return "reservation";
     }
 
-    // 최종결제
     @GetMapping("payment")
-    public String payment(){
+    public String getPayment(HttpSession session){
+        String userSession = session.getAttribute("userEmail") == null ? "" : session.getAttribute("userEmail").toString();
+        if(userSession == ""){
+            return "/login";
+        }
+        return "/";
+    }
+
+    // 최종결제
+    @PostMapping("payment")
+    public String payment(HttpServletRequest request, HttpSession session, ModelMap mm){
+        String room_No = request.getParameter("room_No");
+        RoomVo roomVo = roomService.getRoomInfo(room_No);
+        String userEmail = session.getAttribute("userEmail").toString();
+        UserVo userVo = userService.getUserInfoByEmail(userEmail);
+        String checkin_date = request.getParameter("checkin_date") == null ? "" : request.getParameter("checkin_date").toString();
+        String checkout_date = request.getParameter("checkout_date") == null ? "" : request.getParameter("checkout_date").toString();
+
+        mm.put("roomVo", roomVo);
+        mm.put("userVo", userVo);
+        mm.put("checkin_date", checkin_date);
+        mm.put("checkout_date", checkout_date);
 
         return "payment";
     }

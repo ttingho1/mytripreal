@@ -22,7 +22,8 @@
     <%--데이트피커--%>
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" />
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="http://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
+    <%--<script src="http://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>--%>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 </head>
 <style>
     /* 방 기본정보 */
@@ -72,22 +73,19 @@
             bigPic.setAttribute("src",newPic);
         }
 
-
         var i;
         for(i=0; i<smallPic.length; i++){
             smallPic[i].addEventListener("click",changePic);
         }
 
-
     });
-
-   
-
-
-
-
-
     /* 문서로딩시 제이쿼리 실행끝 */
+
+    function goReservBtn(){
+        window.location.href = "/reservation";
+    }
+
+
 
 
 </script>
@@ -106,11 +104,23 @@
                             전 객실 실내 자이글 바베큐와 전 객실 욕조와 스파를 이용할 수 있습니다.
                         </li>
                     </ul>
-                    <div class="goReservBtn">
-                        <label for="goReservation" />
-                            <a href="reservation" id="goReservation">예약하러가기</a>
-                    </div>
-                    <%--<input type="button" class="goReservBtn" value="예약하러가기" />--%>
+                    <button class="MuiButton-contained jss74 jss71 MuiButton-containedPrimary goReservBtn" tabindex="0" type="button" style="background-color:#ea1f62; color: white; border-radius:5px;" onclick="goReservBtn();">
+						<span class="MuiButton-label">
+							<span>예약하러 가기</span>
+						</span>
+                        <span class="MuiTouchRipple-root"></span>
+                    </button>
+
+                    <%--<c:if test="${roomVo.confirm_yn eq 'N'}">
+                        <div class="goReservBtn">
+                            <a href="reservation">예약하러가기</a>
+                        </div>
+                    </c:if>
+                    <c:if test="${roomVo.confirm_yn eq 'Y'}">
+                        <div class="goReservBtn" style="background: dimgray; text-decoration: none;">
+                            <a href="#none">예약마감</a>
+                        </div>
+                    </c:if>--%>
                 </div>
             </div>
             <div class="col-sm-8">

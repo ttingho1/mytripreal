@@ -1,7 +1,10 @@
 package com.example.mytripreal.service;
 
+
 import com.example.mytripreal.mapper.RoomMapper;
+
 import com.example.mytripreal.vo.RoomVo;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
@@ -16,6 +19,9 @@ public class RoomService {
     @Autowired
     private RoomMapper roomMapper;
 
+
+
+
     // 메인페이지 - 객실미리보기
     public List<RoomVo> getRoomListService(ModelMap mm){
         List<RoomVo> roomVo = roomMapper.getRoomList(mm);
@@ -23,8 +29,8 @@ public class RoomService {
     }
 
     // 객실 상세정보 보기
-    public RoomVo roomDetailService(HashMap hashMap){
-        RoomVo roomVo = roomMapper.getRoomInfo(hashMap);
+    public RoomVo getRoomInfo(String room_No){
+        RoomVo roomVo = roomMapper.getRoomInfo(room_No);
         return roomVo;
     }
 
@@ -33,4 +39,6 @@ public class RoomService {
         List<RoomVo> roomVo = roomMapper.getEmptyRoom(mm);
         return roomVo;
     }
+
+
 }

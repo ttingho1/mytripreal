@@ -33,6 +33,11 @@ public class UserService {
         return userVo;
     }
 
+    public UserVo getUserInfoByEmail(String userEmail){
+        UserVo userVo = userMapper.getUserInfoByEmail(userEmail);
+        return userVo;
+    }
+
     // 마이페이지 - 회원정보 수정
     public int userUpdateModify(UserVo userVo){
         int result = 0;

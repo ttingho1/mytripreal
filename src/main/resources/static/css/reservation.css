@@ -139,7 +139,7 @@ body::backdrop {
 }
 .jss16 dd {
   font-weight: 500;
-  margin-left: 16px;
+  margin-left: 107px;
 }
 .jss17 dd {
   text-decoration: line-through;
@@ -1429,12 +1429,12 @@ body::backdrop {
 }
 .jss43 {
   top: 0;
-  left: 0;
-  width: 100%;
+  left: 4px;
+  width: 67%;
   cursor: inherit;
   height: 100%;
   margin: 0;
-  opacity: 0;
+  /*opacity: 0;*/
   padding: 0;
   z-index: 1;
   position: absolute;
@@ -3031,12 +3031,12 @@ label[data-shrink=false] + .MuiInputBase-formControl .MuiInputBase-input:focus::
 }
 .jss148 {
   top: 0;
-  left: 0;
-  width: 100%;
+  left: 12px;
+  width: 44%;
   cursor: inherit;
   height: 100%;
   margin: 0;
-  opacity: 0;
+  /*opacity: 0;*/
   padding: 0;
   z-index: 1;
   position: absolute;

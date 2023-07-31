@@ -1,6 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
-<c:set var="cpath" value ="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -98,56 +97,6 @@
 			if(days==0)
 				days=1;
 
-			var person=0;
-			person=person_count();
-			console.log(person);
-			if(person>0){
-				if(room=='스텐다드'){
-
-					$('.stay_person').text("숙박인원 : "+person+"인");
-					$('.stay_room').text("스텐다드 룸 :"+Math.ceil(person/2)+"개");
-					$('.stay_date').text("머무는기간 : "+days+"일");
-					$('.stay_pay').text("가격은 총 "+Math.ceil(person/2)*10*days+"만원 입니다.");
-					$('.stay_pay').append("<br/><h4>이대로 결제하시겠어요?</h4>");
-
-				}else if(room=='슈페리어'){
-					if(person<4)
-						person=4;
-					$('.stay_person').text("숙박인원 : "+person+"인");
-					$('.stay_room').text("스텐다드 룸 :"+Math.ceil(person/2)+"개");
-					$('.stay_date').text("머무는기간 : "+days+"일");
-					$('.stay_pay').text("가격은 총 "+Math.ceil(person/4)*19*days+"만원 입니다.");
-					$('.stay_pay').append("<br/><h4>이대로 결제하시겠어요?</h4>");
-
-				}else{
-					if(person<8)
-						person=6;
-
-					$('.stay_person').text("숙박인원 : "+person+"인");
-					$('.stay_room').text("스텐다드 룸 :"+Math.ceil(person/2)+"개");
-					$('.stay_date').text("머무는기간 : "+days+"일");
-					$('.stay_pay').text("가격은 총 "+Math.ceil(person/8)*36*days+"만원 입니다.");
-					$('.stay_pay').append("<br/><h4>이대로 결제하시겠어요?</h4>");
-
-				}
-
-			}else{
-				alert("숙박인원이 1인 이상이어야 합니다");
-			}
-		}
-
-		//사람 수 체크 함수
-		function person_count(){
-			var person=$('.person_select').text();
-			if(person=='성인 2인'){
-				return 2;
-			}else if(person=='성인 3~4인'){
-				return 4;
-			}else if(person=='성인 5~6인'){
-				return 6;
-			}else{
-				return person;
-			}
 		}
 
 		// 머무르는 기간 함수
@@ -265,37 +214,52 @@
 			$('.nightNum').html(getDateDiff(newCheckIn, newCheckOut)+'박');
 		});
 
-		$("#submit").click(function() {
-			alert("Submit button is clicked!");
-			event.preventDefault();
-		});
-
 
 	});
-
 	/* 문서로딩시 제이쿼리 실행끝 */
 
 
-	// ajax test
+	// 객실선택시 금액 표시
+	function selectRoom(a){
+		$('.totalPayment').text($(a).val());
+	}
 
+	// 예약하기 버튼 -> 결제페이지 이동
+	function validate(){
+		let frm = $('#frm');
 
+		if($("input[name='roomSelect']:checked").val() == null){
+			alert('방을 선택해주세요.');
+			return;
+		}
+		$("input[name='room_No']").val($("input[name='roomSelect']:checked").attr('id'));
+		frm.submit();
+	}
+
+	// (임시) 객실검색
+	function search(){
+		alert('검색기능 개발중');
+		var e = window.event;
+		e.preventDefault();
+	}
 
 
 </script>
 <body>
 <jsp:include page="common/header.jsp"/><!--header.jsp -->
+<form class="jss99" id="frm" method="post" action="/payment">
+	<input type="hidden" name="room_No" value="">
 <section id="cart_items">
 	<div class="container">
 		<div class="jss20 bookingSection jss15">
 			<div class="MuiGrid-root jss21 sectionHeader MuiGrid-container">숙박기간</div>
 			<div class="MuiGrid-root jss22 sectionContainer MuiGrid-container">
-				<form class="jss99">
 					<div class="jss100">
 						<div class="jss102">
 							<div class="MuiFormControl-root MuiTextField-root jss125 MuiFormControl-fullWidth">
 								<label class="MuiFormLabel-root MuiFormLabel-colorSecondary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined Mui-disabled Mui-disabled MuiFormLabel-filled" data-shrink="true">입실일</label>
 								<div class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorSecondary MuiOutlinedInput-colorSecondary MuiInputBase-fullWidth MuiInputBase-formControl">
-									<input type="text" aria-invalid="false" class="MuiInputBase-input MuiOutlinedInput-input"  name="checkin" id="checkin_date">
+									<input type="text" aria-invalid="false" class="MuiInputBase-input MuiOutlinedInput-input"  name="checkin_date" id="checkin_date">
 									<fieldset aria-hidden="true" class="jss131 MuiOutlinedInput-notchedOutline" style="padding-left: 8px;">
 										<legend class="jss132" style="width: 55.25px;">
 											<span>&ZeroWidthSpace;</span>
@@ -310,7 +274,7 @@
 							<div class="MuiFormControl-root MuiTextField-root jss125 MuiFormControl-fullWidth">
 								<label class="MuiFormLabel-root MuiFormLabel-colorSecondary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined Mui-disabled Mui-disabled MuiFormLabel-filled" data-shrink="true">퇴실일</label>
 								<div class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorSecondary MuiOutlinedInput-colorSecondary Mui-disabled Mui-disabled MuiInputBase-fullWidth MuiInputBase-formControl">
-									<input aria-invalid="false" type="text" class="MuiInputBase-input MuiOutlinedInput-input Mui-disabled Mui-disabled" name="checkout" id="checkout_date">
+									<input aria-invalid="false" type="text" class="MuiInputBase-input MuiOutlinedInput-input Mui-disabled Mui-disabled" name="checkout_date" id="checkout_date">
 									<fieldset aria-hidden="true" class="jss131 MuiOutlinedInput-notchedOutline" style="padding-left: 8px;">
 										<legend class="jss132" style="width: 55.25px;">
 											<span>&ZeroWidthSpace;</span>
@@ -320,10 +284,9 @@
 							</div>
 						</div>
 						<div class="jss101">
-							<button class = "btn btn-success btn-sm" onclick="loadJson();">검색</button>
+							<button class="btn btn-success btn-sm" onclick="search();">검색</button>
 						</div>
 					</div>
-				</form>
 			</div>
 		</div>
 		<div class="review-payment">
@@ -347,12 +310,13 @@
 					<div class="jss30 itemInfo">
 					<span class="jss137 jss135 jss134 jss149">
 						<i class="jss136">
-							<c:if test="${roomVo.confirm_yn eq 'N'}">
+							예약가능
+							<%--<c:if test="${roomVo.confirm_yn eq 'N'}">
 								예약가능
 							</c:if>
 							<c:if test="${roomVo.confirm_yn eq 'Y'}">
 								예약불가능
-							</c:if>
+							</c:if>--%>
 						</i>
 					</span>
 						<div class="jss31 itemTitle">${roomVo.room_name}</div>
@@ -364,27 +328,17 @@
 								<c:choose>
 									<c:when test="${roomVo.room_type eq 1}">원룸형 / ${roomVo.room_size}평</c:when>
 									<c:when test="${roomVo.room_type eq 2}">디럭스형 / ${roomVo.room_size}평</c:when>
-									<c:otherwise>슈퍼디럭스형 / ${roomVo.room_size}평</c:otherwise>
+									<c:otherwise>
+										슈퍼디럭스형 / ${roomVo.room_size}평
+									</c:otherwise>
 								</c:choose>
 							</div>
 						</div>
 					</div>
 					<div class="jss34">
 						<div class="jss35">
-							<c:choose>
-								<c:when test="${roomVo.room_type eq 1}">
-									<input type="radio" id="${roomVo.room_no}" name="roomSelect" class="jss36" value="${roomVo.room_fee}">
-									<label for="${roomVo.room_no}" class="jss37 selectItemLabel">
-								</c:when>
-								<c:when test="${roomVo.room_type eq 2}">
-									<input type="radio" id="${roomVo.room_no}" name="roomSelect" class="jss36" value="${roomVo.room_fee}">
-									<label for="${roomVo.room_no}" class="jss37 selectItemLabel">
-								</c:when>
-								<c:otherwise>
-									<input type="radio" id="${roomVo.room_no}" name="roomSelect" class="jss36" value="${roomVo.room_fee}">
-									<label for="${roomVo.room_no}" class="jss37 selectItemLabel">
-								</c:otherwise>
-							</c:choose>
+							<input type="radio" id="${roomVo.room_no}" name="roomSelect" class="jss36" value="${roomVo.room_fee}" onclick="selectRoom(this);">
+							<label for="${roomVo.room_no}" class="jss37 selectItemLabel">
 							<svg class="MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" role="presentation">
 								<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
 							</svg>
@@ -409,9 +363,9 @@
 			<div class="jss69">
 				<span class="jss72">총 결제금액 : </span>
 				<span class="jss70 totalPayment">0&nbsp;</span>원</div>
-			<button class="MuiButton-contained jss74 jss71 MuiButton-containedPrimary " tabindex="0" type="button" style="background-color:#ea1f62; color: white; border-radius:5px;">
+			<button class="MuiButton-contained jss74 jss71 MuiButton-containedPrimary " tabindex="0" type="button" style="background-color:#ea1f62; color: white; border-radius:5px;" onclick="validate();">
 						<span class="MuiButton-label">
-							<span>예약 결제</span>
+							<span>예약하기</span>
 						</span>
 				<span class="MuiTouchRipple-root"></span>
 			</button>
@@ -419,6 +373,7 @@
 	</div>
 	</div>
 </section> <!--/#cart_items-->
+</form>
 <jsp:include page="common/footer.jsp"/><!--footer.jsp -->
 <script src="resources/static/js/bootstrap.min.js"></script>
 <script src="resources/static/js/jquery.scrollUp.min.js"></script>

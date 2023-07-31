@@ -21,4 +21,7 @@ public interface UserMapper {
     // 회원정보 한명 가져오기
     UserVo getUserInfo(HashMap hashMap);
 
+    // 이메일 기반 유저 정보 가져오기
+    UserVo getUserInfoByEmail(String userEmail);
+
 }

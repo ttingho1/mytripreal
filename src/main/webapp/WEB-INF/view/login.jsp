@@ -14,6 +14,7 @@
     <!--Theme custom css -->
     <link rel="stylesheet" href="resources/static/css/reset.css">
     <link rel="stylesheet" href="resources/static/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <style>
         #bg_wrap {
             background-image: url('/resources/static/images/img_bg_login.png');
