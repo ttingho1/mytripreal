@@ -14,6 +14,15 @@
     <link rel="stylesheet" href="resources/static/css/reservation.css">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 </head>
+<style>
+    /* input 박스 안나오게 */
+    .box_none {
+        text-align: center;
+        border: 0;
+        outline: none;
+        width: 40%;
+    }
+</style>
 <script>
     // 문서로딩 후 제이쿼리 실행
     $(function(){
@@ -63,12 +72,12 @@
         /* 선택객실목록 시작 */
 
             // 이용일 value 값 받기
-            $("input[name='start_date']").attr('value', $("label[for='start_date']").text());
-            $("input[name='end_date']").attr('value', $("label[for='end_date']").text());
+            $("input[name='checkin_date']").attr('value', $("input[name='checkin_date']").val());
+            $("input[name='checkout_date']").attr('value', $("input[name='checkout_date']").val());
 
             // 숙박일수 value 값 받기
-            const checkIn = $("input[name='start_date']").val();
-            const checkOut = $("input[name='end_date']").val();
+            const checkIn = $("input[name='checkin_date']").val();
+            const checkOut = $("input[name='checkout_date']").val();
             const getDateDiff = (d1, d2) => {
                 const date1 = new Date(d1);
                 const date2 = new Date(d2);
@@ -80,7 +89,7 @@
             $('.nightNum').html(getDateDiff(checkIn, checkOut)+'박');
 
             // 객실금액 value 값 받기
-            $("input[name='pay_oneDay']").attr('value', $("label[for='pay_oneDay']").text());
+            /*$("input[name='pay_oneDay']").attr('value', $("input[name='pay_oneDay']").val());*/
 
 
 
@@ -89,14 +98,14 @@
         /* 결제정보 시작 */
 
             // 총 결제금액 value값 받기
-            $("input[name='pay_total']").attr('value',$("label[for='pay_total']").text());
+            /*$("input[name='pay_total']").attr('value',$("label[for='pay_total']").text());*/
 
             // 총 결제금액 계산 (숙박일수 x 객실금액(1일))
             var nightNum = Number($('.nightNum').text().replace('박',''));
-            var pay_OneDay = Number($("input[name='pay_oneDay']").attr('value', $("label[for='pay_oneDay']").text()).val());
+            var pay_OneDay = Number($("input[name='pay_oneDay']").val());
             var pay_total = nightNum * pay_OneDay;
             $("input[name='pay_total']").attr('value', pay_total);
-            $("label[for='pay_total']").text(pay_total);
+            /*$("input[name='pay_total']").text(pay_total);*/
 
         /* 결제정보 끝 */
 
@@ -160,6 +169,8 @@
 
 </script>
 <body>
+<!-- 예약번호 히든값 -->
+<input type="hidden" name="reservation_no" id="reservation_no" value="">
 <section>
     <div class="container">
         <div class="jss3">
@@ -195,17 +206,16 @@
                                     <div class="jss12">
                                         <div class="jss13" style="text-align: center;">
                                             <div class="jss14"><c:out value="${roomVo.room_no}"></c:out> 호</div>
-                                            <div class="jss15" name="person">기준 : <c:out value="${roomVo.person_min}"></c:out>명 / 최대 : <c:out value="${roomVo.person_max}"></c:out>명</div>
+                                            기준<input type="text" name="person" id="person" class="box_none" value="<c:out value='${roomVo.person_min}'></c:out>" readonly style="width: 5%;">명
+                                            / 최대<input type="text" name="person_max" id="person_max" class="box_none" value="<c:out value='${roomVo.person_max}'></c:out>" readonly style="width:5%;">명
                                         </div>
                                         <div></div>
                                     </div>
                                     <div class="jss12" data-item-title="이용일">
                                         <div class="jss13">
-                                            <label for="start_date"><c:out value="${checkin_date}"></c:out></label>
-
+                                            <input type="text" name="checkin_date" id="checkin_date" class="box_none" value="<c:out value='${checkin_date}'></c:out>" readonly>
                                             ~
-                                            <label for="end_date"><c:out value="${checkout_date}"></c:out></label>
-
+                                           <input type="text" name="checkout_date" id="checkout_date" class="box_none" value="<c:out value='${checkout_date}'></c:out>" readonly>
                                         </div>
                                     </div>
                                     <div class="jss12" data-item-title="숙박일수">
@@ -215,10 +225,7 @@
                                     </div>
                                     <div class="jss12" data-item-title="객실금액">
                                         <div class="jss13">
-                                            <label for="pay_oneDay"><c:out value="${roomVo.room_fee}"></c:out></label>
-                                            원
-
-
+                                            <input type="text" name="pay_oneDay" id="pay_oneDay" class="box_none" value="<c:out value='${roomVo.room_fee}'></c:out>" readonly style="width: 25%; text-align: right;">원
                                         </div>
                                     </div>
                                 </li>
@@ -509,7 +516,7 @@
                                 <td style="padding-top: 16px;">
                                     <div class="MuiFormControl-root MuiTextField-root jss71 jss75 MuiFormControl-marginNormal MuiFormControl-fullWidth">
                                         <div class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorSecondary MuiOutlinedInput-colorSecondary MuiInputBase-fullWidth MuiInputBase-formControl">
-                                            <input aria-invalid="false" type="text" name="userName" id="userName" class="MuiInputBase-input MuiOutlinedInput-input" value="<c:out value="${userVo.userName}"></c:out>">
+                                            <input aria-invalid="false" type="text" name="userName" id="userName" class="MuiInputBase-input MuiOutlinedInput-input" value="<c:out value='${userVo.userName}'></c:out>">
                                             <fieldset aria-hidden="true" class="jss77 MuiOutlinedInput-notchedOutline" style="padding-left: 30.375px;">
                                                 <legend class="jss78" style="width: 0.01px;">
                                                     <span>&ZeroWidthSpace;</span>
@@ -538,7 +545,7 @@
                                         <div class="MuiGrid-root jss80 jss81 MuiGrid-item MuiGrid-grid-sm-4">
                                             <div class="MuiFormControl-root MuiTextField-root jss71 jss75 MuiFormControl-marginNormal MuiFormControl-fullWidth">
                                                 <div class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorSecondary MuiOutlinedInput-colorSecondary MuiInputBase-fullWidth MuiInputBase-formControl">
-                                                    <input aria-invalid="false" type="text" id="hp2" name="hp2" class="MuiInputBase-input MuiOutlinedInput-input" value="<c:out value="${userVo.hp2}"></c:out>" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                                    <input aria-invalid="false" type="text" id="hp2" name="hp2" class="MuiInputBase-input MuiOutlinedInput-input" value="<c:out value='${userVo.hp2}'></c:out>" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                                     <fieldset aria-hidden="true" class="jss77 MuiOutlinedInput-notchedOutline" style="padding-left: 8px;">
                                                         <legend class="jss78" style="width: 0.01px;">
                                                             <span>&ZeroWidthSpace;</span>
@@ -550,7 +557,7 @@
                                         <div class="MuiGrid-root jss80 jss81 MuiGrid-item MuiGrid-grid-sm-4">
                                             <div class="MuiFormControl-root MuiTextField-root jss71 jss75 MuiFormControl-marginNormal MuiFormControl-fullWidth">
                                                 <div class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorSecondary MuiOutlinedInput-colorSecondary MuiInputBase-fullWidth MuiInputBase-formControl">
-                                                    <input aria-invalid="false" type="text" id="hp3" name="hp3" class="MuiInputBase-input MuiOutlinedInput-input" value="<c:out value="${userVo.hp3}"></c:out>" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                                    <input aria-invalid="false" type="text" id="hp3" name="hp3" class="MuiInputBase-input MuiOutlinedInput-input" value="<c:out value='${userVo.hp3}'></c:out>" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                                     <fieldset aria-hidden="true" class="jss77 MuiOutlinedInput-notchedOutline" style="padding-left: 8px;">
                                                         <legend class="jss78" style="width: 0.01px;">
                                                             <span>&ZeroWidthSpace;</span>
@@ -567,7 +574,7 @@
                                 <td>
                                     <div class="MuiFormControl-root MuiTextField-root jss71 MuiFormControl-marginDense MuiFormControl-fullWidth">
                                         <div class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorSecondary MuiOutlinedInput-colorSecondary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-marginDense MuiOutlinedInput-marginDense">
-                                            <input aria-invalid="false" type="text" name="userEmail" id="userEmail" class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMarginDense MuiOutlinedInput-inputMarginDense" value="<c:out value="${userVo.userEmail}"></c:out>" placeholder="ex)test@naver.com">
+                                            <input aria-invalid="false" type="text" name="userEmail" id="userEmail" class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMarginDense MuiOutlinedInput-inputMarginDense" value="<c:out value='${userVo.userEmail}'></c:out>'" placeholder="ex)test@naver.com">
                                             <fieldset aria-hidden="true" class="jss77 MuiOutlinedInput-notchedOutline" style="padding-left: 25.875px;">
                                                 <legend class="jss78" style="width: 0.01px;">
                                                     <span>&ZeroWidthSpace;</span>
@@ -608,9 +615,7 @@
                             <tr>
                                 <th>총 결제 금액</th>
                                 <td class="jss100">
-                                    <label for="pay_total"><span class="jss101">?????</span></label>
-                                    원
-
+                                    <input type="text" name="pay_total" id="pay_total" class="jss101 box_none" value="" readonly style="font-size: 26px; text-align: right; font-weight: 700;">원
                                 </td>
                             </tr>
                             <tr>
@@ -659,14 +664,6 @@
                             </tr>
                             </tbody>
                         </table>
-                        <!-- 컨트롤러로 전송 -->
-                        <form action="#none" method="get">
-                            <input type="hidden" name="start_date" id="start_date" class="jss21" value="">
-                            <input type="hidden" name="end_date" id="end_date" class="jss21" value="">
-                            <input type="hidden" name="pay_oneDay" id="pay_oneDay" value="">
-                            <input type="hidden" name="reservation_no" id="reservation_no" value="">
-                            <input type="hidden" name="pay_total" id="pay_total" value="">
-                        </form>
                         <div class="MuiGrid-root jss86 jss99 MuiGrid-container MuiGrid-spacing-xs-2">
                             <div class="MuiGrid-root jss123 MuiGrid-item MuiGrid-grid-xs-6">
                                 <button class="MuiButtonBase-root MuiButton-root MuiButton-outlined jss127 jss132 jss126 MuiButton-outlinedSecondary MuiButton-outlinedSizeLarge MuiButton-sizeLarge MuiButton-fullWidth" tabindex="0" type="button" onclick="back();">
