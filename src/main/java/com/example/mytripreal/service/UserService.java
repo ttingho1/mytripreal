@@ -1,11 +1,13 @@
 package com.example.mytripreal.service;
 
 import com.example.mytripreal.mapper.UserMapper;
+import com.example.mytripreal.vo.ReservationVo;
 import com.example.mytripreal.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 
 
 @Service
@@ -43,6 +45,12 @@ public class UserService {
         int result = 0;
         result = userMapper.userUpdate(userVo);
         return result;
+    }
+
+    // 마이페이지 - 나의예약내역 보기
+    public List<ReservationVo> getMyReservation(String userEmail){
+        List<ReservationVo> reservationVo = userMapper.getMyReservation(userEmail);
+        return reservationVo;
     }
 
 

@@ -8,6 +8,7 @@ import java.util.Date;
 public class RoomVo {
 
     private int room_no; // 방번호
+//    private String reservation_no; // 예약번호
     private String room_name; // 방이름
     private String room_type; // 방형태 (1:원룸, 2:복층, 3:단체)
     private String room_size; // 방크기

@@ -140,18 +140,7 @@
 <div class="container-fluid-full">
     <div class="row-fluid">
 
-        <!-- start: Main Menu -->
-        <div id="sidebar-left" class="span2">
-            <div class="nav-collapse sidebar-nav">
-                <ul class="nav nav-tabs nav-stacked main-menu">
-                    <li><a href="/admin"><i class="icon-bar-chart"></i><span class="hidden-tablet"> 대시보드</span></a></li>
-                    <li><a href="/admin/memberList"><i class="icon-bar-chart"></i><span class="hidden-tablet"> 회원관리 </span></a></li>
-                    <li><a href="/admin/qnaList"><i class="icon-bar-chart"></i><span class="hidden-tablet"> 문의관리 </span></a></li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- end: Main Menu -->
+        <jsp:include page="common/menuNavi.jsp" /><!-- Main Menu -->
 
         <noscript>
             <div class="alert alert-block span10">

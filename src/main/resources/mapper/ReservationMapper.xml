@@ -2,6 +2,30 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.mytripreal.mapper.ReservationMapper">	<!-- mapper 인터페이스가 위치하는 경로 -->
 
+    <!-- 객실 예약하기 -->
+    <insert id="payment" parameterType="hashMap" useGeneratedKeys="true" keyProperty="seq" >
+        INSERT INTO reservation
+                    (reservation_no, room_no, userEmail, userName, hp1, hp2, hp3, etc, pay_type, pay_total, checkin_date, checkout_date, confirm_yn, cancel_yn, refund_yn)
+              VALUES
+                    (#{reservation_no}, #{room_no}, #{userEmail}, #{userName}, #{hp1},#{hp2},#{hp3}, #{etc}, #{pay_type}, #{pay_total}, #{checkin_date}, #{checkout_date},
+                     'N', #{cancel_yn}, #{refund_yn});
+    </insert>
+
+    <!-- 객실선택해서 임시테이블로 insert -->
+    <insert id="insertReservationTemp" parameterType="hashMap" useGeneratedKeys="true" keyProperty="seq">
+        INSERT INTO reservation_temp
+                (userEmail, room_no, checkin_date, checkout_date, confirm_yn, create_dt)
+          VALUES
+                (#{userEmail}, #{room_no}, #{checkin_date}, #{checkout_date}, 'N', now());
+    </insert>
+
+    <!-- 예약 최종확인하기(+예약번호) -->
+    <select id="getReservationConfirm" parameterType="String" resultType="com.example.mytripreal.vo.ReservationVo">
+        SELECT reservation_no, room_no, userEmail, userName, checkin_date, checkout_date, pay_total
+          FROM reservation
+         WHERE USEREMAIL = #{userEmail};
+    </select>
+
 
 
 

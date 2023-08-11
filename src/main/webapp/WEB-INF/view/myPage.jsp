@@ -68,40 +68,39 @@
 				<div class="col-sm-9 padding-right">
 					<div class="features_items"><!--features_items-->
 						<h2 class="title text-center">나의예약내역</h2>
+						<h3 style="color: red; margin-top: -20px; font-size: 13px;">*최근 3개예약 내역만 표시됩니다.</h3>
 						<table>
 							<thead>
-							  <tr>
-								<th>번호</th>
-								<th>제목</th>
-								<th>작성자</th>
-							  </tr>
+								<tr>
+									<th>객실호수</th>
+									<th>체크인날짜</th>
+									<th>체크아웃날짜</th>
+									<th>입금방법</th>
+									<th>금액</th>
+									<th>승인여부</th>
+								</tr>
 							</thead>
 							<tbody>
-							  <tr>
-								<td>1</td>
-								<td>Joakim Noah</td>
-								<td>C</td>
-							  </tr>
-							  <tr>
-								<td>2</td>
-								<td>Vladimir Radmanovic</td>
-								<td>F</td>
-							  </tr>
-							  <tr>
-								<td>3</td>
-								<td>Nate Robinson</td>
-								<td>G</td>
-							  </tr>
-							  <tr>
-								<td>4</td>
-								<td>Derrick Rose</td>
-								<td>G</td>
-							  </tr>
-							  <tr>
-								<td>5</td>
-								<td>Marquis Teague</td>
-								<td>G</td>
-							  </tr>
+								<c:forEach var="reservationVo" items="${reservationVo}">
+									<tr>
+										<td>${reservationVo.room_no}</td>
+										<td>${reservationVo.checkin_date}</td>
+										<td>${reservationVo.checkout_date}</td>
+										<c:if test="${reservationVo.pay_type eq '1'}">
+											<td>신용카드</td>
+										</c:if>
+										<c:if test="${reservationVo.pay_type eq '2'}">
+											<td>무통장입금</td>
+										</c:if>
+										<td>${reservationVo.pay_total}</td>
+										<c:if test="${reservationVo.confirm_yn eq 'N'}">
+											<td>예약대기</td>
+										</c:if>
+										<c:if test="${reservationVo.confirm_yn eq 'Y'}">
+											<td>예약확정</td>
+										</c:if>
+									</tr>
+								</c:forEach>
 							</tbody>
 						  </table>
 					</div><!--features_items-->

@@ -4,28 +4,49 @@
 <html lang="ko">
 <head>
 
-    <!-- start: Meta -->
     <meta charset="utf-8">
     <title>Bootstrap Metro Dashboard by Dennis Ji for ARM demo</title>
     <meta name="description" content="Bootstrap Metro Dashboard">
     <meta name="author" content="Dennis Ji">
     <meta name="keyword" content="Metro, Metro UI, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
-    <!-- end: Meta -->
-
-    <!-- start: Mobile Specific -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- end: Mobile Specific -->
 
-    <!-- start: CSS -->
     <link id="bootstrap-style" href="/resources/static/admin/css/bootstrap.min.css" rel="stylesheet">
     <link href="/resources/static/admin/css/bootstrap-responsive.min.css" rel="stylesheet">
     <link id="base-style" href="/resources/static/admin/css/style.css" rel="stylesheet">
     <link id="base-style-responsive" href="/resources/static/admin/css/style-responsive.css" rel="stylesheet">
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&subset=latin,cyrillic-ext,latin-ext' rel='stylesheet' type='text/css'>
-    <!-- end: CSS -->
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 
 </head>
+<style>
+    .box-content table tr th,
+    .box-content table tbody tr td {
+        text-align: center;
+    }
+</style>
+<script>
+    // 무통장입금 - 승인버튼
+    function confirm(reservation_no){
 
+        var newForm = $('<form></form>');
+        //set attribute (form)
+        newForm.attr("name","newForm");
+        newForm.attr("method","post");
+        newForm.attr("action","/admin/confirmIsY");
+
+        // create element & set attribute (input)
+        newForm.append($('<input/>', {type: 'hidden', name: 'confirm_yn', value:'Y' }));
+        newForm.append($('<input/>', {type: 'hidden', name: 'reservation_no', value:reservation_no }));
+
+        // append form (to body)
+        newForm.appendTo('body');
+
+        // submit form
+        newForm.submit();
+
+    }
+</script>
 <body>
 <jsp:include page="common/adminHeader.jsp"/><!--adminHeader.jsp -->
 
@@ -44,6 +65,7 @@
         <!-- start: Content -->
         <div id="content" class="span10">
 
+
             <ul class="breadcrumb">
                 <li>
                     <i class="icon-home"></i>
@@ -56,7 +78,7 @@
             <div class="row-fluid sortable">
                 <div class="box span12">
                     <div class="box-header" data-original-title>
-                        <h2><i class="halflings-icon white user"></i><span class="break"></span>회원목록</h2>
+                        <h2><i class="halflings-icon white user"></i><span class="break"></span>문의사항</h2>
                         <div class="box-icon">
                             <a href="#" class="btn-setting"><i class="halflings-icon white wrench"></i></a>
                             <a href="#" class="btn-minimize"><i class="halflings-icon white chevron-up"></i></a>
@@ -67,37 +89,49 @@
                         <table class="table table-striped table-bordered bootstrap-datatable datatable">
                             <thead>
                             <tr>
+                                <th>예약번호</th>
+                                <th>객실호수</th>
                                 <th>이메일</th>
                                 <th>이름</th>
-                                <th>주소</th>
-                                <th>상세주소</th>
-                                <th>우편번호</th>
-                                <th>등록일</th>
-                                <th>최종접속일</th>
+                                <th>번호</th>
+                                <th>결제금액</th>
+                                <th>입실일</th>
+                                <th>퇴실일</th>
+                                <th>입금확인</th>
+                                <th>취소여부</th>
+                                <th>환불여부</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <c:forEach var="allMemberJoinVo" items="${allMemberJoinVo}">
+                            <c:forEach var="reservationVo" items="${reservationVo}">
                                 <tr>
-                                    <td>${allMemberJoinVo.userEmail}</td>
-                                    <td class="center">${allMemberJoinVo.userName}</td>
-                                    <td class="center">${allMemberJoinVo.address1}</td>
-                                    <td class="center">${allMemberJoinVo.address2}</td>
-                                    <td class="center">${allMemberJoinVo.zipCode}</td>
-                                    <td class="center">${allMemberJoinVo.regDate}</td>
-                                    <td class="center">${allMemberJoinVo.lateDate}</td>
+                                    <td>${reservationVo.reservation_no}</td>
+                                    <td class="center">${reservationVo.room_no}</td>
+                                    <td class="center">${reservationVo.userEmail}</td>
+                                    <td class="center">${reservationVo.userName}</td>
+                                    <td class="center">${reservationVo.hp1}-${reservationVo.hp2}-${reservationVo.hp3}</td>
+                                    <td class="center">${reservationVo.pay_total}</td>
+                                    <td class="center">${reservationVo.checkin_date}</td>
+                                    <td class="center">${reservationVo.checkout_date}</td>
+                                    <td class="center div_btn">
+                                        <c:choose>
+                                            <c:when test="${reservationVo.confirm_yn eq 'Y'}">
+                                                <button type="button" class="btn btn-success m-1 btn" style="width:100px" disabled="disabled">완료</button>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <button type="button" class="btn btn-success m-1 btn" style="width:100px; background-color: purple" onclick="confirm('${reservationVo.reservation_no}');">승인</button>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td class="center">${reservationVo.cancel_yn}</td>
+                                    <td class="center">${reservationVo.refund_yn}</td>
                                 </tr>
                             </c:forEach>
                             </tbody>
                         </table>
                     </div>
                 </div><!--/span-->
-
             </div><!--/row-->
-
-
-
-
         </div><!--/.fluid-container-->
 
         <!-- end: Content -->

@@ -1,6 +1,7 @@
 package com.example.mytripreal.service;
 
 import com.example.mytripreal.mapper.AdminMapper;
+import com.example.mytripreal.mapper.ReservationMapper;
 import com.example.mytripreal.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,6 @@ public class AdminService {
 
     @Autowired
     private AdminMapper adminMapper;
-
 
 
     // 로그인
@@ -84,6 +84,30 @@ public class AdminService {
         return todayJoinResult;
     }
 
+    // 예약완료 수
+    public int getReservationResult(ModelMap mm){
+        int getReservationResult = 0;
+        getReservationResult = adminMapper.getReservationResult(mm);
+        return getReservationResult;
+    }
 
+    // 무통장입금 - 예약대기 수
+    public int noneBankBookResult(ModelMap mm){
+        int noneBankBookResult = 0;
+        noneBankBookResult = adminMapper.noneBankBookResult(mm);
+        return noneBankBookResult;
+    }
+
+    // 예약관리 - 글보기(예약전체보기)
+    public List<ReservationVo> reservationList(ModelMap mm){
+        List<ReservationVo> reservationVo = adminMapper.reservationList(mm);
+        return reservationVo;
+    }
+
+    // 무통장입금 - 입금대기 승인버튼
+    public boolean noneBankBookOK(String reservation_no){
+        adminMapper.noneBankBookOK(reservation_no);
+        return true;
+    }
 
 }

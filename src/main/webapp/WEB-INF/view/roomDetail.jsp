@@ -82,7 +82,7 @@
     /* 문서로딩시 제이쿼리 실행끝 */
 
     function goReservBtn(){
-        window.location.href = "/reservation";
+        window.location.href = "/roomList";
     }
 
 
@@ -106,7 +106,7 @@
                     </ul>
                     <button class="MuiButton-contained jss74 jss71 MuiButton-containedPrimary goReservBtn" tabindex="0" type="button" style="background-color:#ea1f62; color: white; border-radius:5px;" onclick="goReservBtn();">
 						<span class="MuiButton-label">
-							<span>예약하러 가기</span>
+							<span>더 알아보러가기</span>
 						</span>
                         <span class="MuiTouchRipple-root"></span>
                     </button>

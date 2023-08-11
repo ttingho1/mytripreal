@@ -21,7 +21,6 @@ public class RoomService {
 
 
 
-
     // 메인페이지 - 객실미리보기
     public List<RoomVo> getRoomListService(ModelMap mm){
         List<RoomVo> roomVo = roomMapper.getRoomList(mm);
@@ -29,15 +28,20 @@ public class RoomService {
     }
 
     // 객실 상세정보 보기
-    public RoomVo getRoomInfo(String room_No){
-        RoomVo roomVo = roomMapper.getRoomInfo(room_No);
+    public RoomVo getRoomInfo(String room_no){
+        RoomVo roomVo = roomMapper.getRoomInfo(room_no);
         return roomVo;
     }
 
-    // 빈 객실 모두 불러오기(결제확정여부 N)
-    public List<RoomVo> getEmptyRoomService(ModelMap mm){
-        List<RoomVo> roomVo = roomMapper.getEmptyRoom(mm);
+
+    public List<RoomVo> getRoomList(ModelMap mm){
+        List<RoomVo> roomVo = roomMapper.getRoomList(mm);
         return roomVo;
+    }
+
+    public List<RoomVo> reservationRoomList(HashMap hashMap){
+        List<RoomVo> reservationRoomVo = roomMapper.reservationRoomList(hashMap);
+        return reservationRoomVo;
     }
 
 

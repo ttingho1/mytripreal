@@ -16,6 +16,7 @@
 	<link id="base-style" href="/resources/static/admin/css/style.css" rel="stylesheet">
 	<link id="base-style-responsive" href="/resources/static/admin/css/style-responsive.css" rel="stylesheet">
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&subset=latin,cyrillic-ext,latin-ext' rel='stylesheet' type='text/css'>
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 	<!-- end: CSS -->	
 </head>
 <style>
@@ -28,18 +29,8 @@
 <jsp:include page="common/adminHeader.jsp"/><!--adminHeader.jsp -->
 	<div class="container-fluid-full">
 	<div class="row-fluid">
-		<!-- start: Main Menu -->
-		<div id="sidebar-left" class="span2">
-			<div class="nav-collapse sidebar-nav">
-				<ul class="nav nav-tabs nav-stacked main-menu">
-					<li><a href="/admin"><i class="icon-bar-chart"></i><span class="hidden-tablet"> 대시보드</span></a></li>
-					<li><a href="/admin/memberList"><i class="icon-bar-chart"></i><span class="hidden-tablet"> 회원관리 </span></a></li>
-					<li><a href="/admin/qnaList"><i class="icon-bar-chart"></i><span class="hidden-tablet"> 문의관리 </span></a></li>
-				</ul>
-			</div>
-		</div>
 
-		<!-- end: Main Menu -->
+		<jsp:include page="common/menuNavi.jsp" /><!-- Main Menu -->
 
 		<noscript>
 			<div class="alert alert-block span10">
@@ -65,7 +56,7 @@
 
 			<div class="span3 statbox purple" onTablet="span6" onDesktop="span3">
 				<div class="number">${memResult}명<i class="icon-arrow-up"></i></div>
-				<div class="title">총 회원수</div>
+				<div class="title">총 회원 수</div>
 			</div>
 			<div class="span3 statbox yellow" onTablet="span6" onDesktop="span3">
 				<div class="number">${todayJoinResult}명<i class="icon-arrow-down"></i></div>
@@ -83,7 +74,7 @@
 
 			<div class="span3 statbox red" onTablet="span6" onDesktop="span3">
 				<div class="number">${qnaResult}개<i class="icon-arrow-up"></i></div>
-				<div class="title">총 문의수</div>
+				<div class="title">총 문의 수</div>
 			</div>
 			<div class="span3 statbox blue" onTablet="span6" onDesktop="span3">
 				<div class="number">${Yresult}개<i class="icon-arrow-up"></i></div>
@@ -96,25 +87,19 @@
 		</div>
 
 		<div class="row-fluid">
-<!--
-			<div class="span3 statbox blue" onTablet="span6" onDesktop="span3">
-				<div class="number">???<i class="icon-arrow-up"></i></div>
-				<div class="title">총 예약횟수</div>
-			</div>
-			<div class="span3 statbox red" onTablet="span6" onDesktop="span3">
-				<div class="number">???<i class="icon-arrow-up"></i></div>
-				<div class="title">예약(이번달)</div>
-			</div>
-			<div class="span3 statbox yellow noMargin" onTablet="span6" onDesktop="span3">
-				<div class="number">???<i class="icon-arrow-up"></i></div>
-				<div class="title">예약(이번주)</div>
-			</div>
+
 			<div class="span3 statbox green noMargin" onTablet="span6" onDesktop="span3">
-				<div class="number">???<i class="icon-arrow-up"></i></div>
-				<div class="title">예약(오늘)</div>
+				<div class="number">${getResult}개<i class="icon-arrow-up"></i></div>
+				<div class="title">무통장입금 예약 완료</div>
 			</div>
+
+			<div class="span3 statbox purple" onTablet="span6" onDesktop="span3">
+				<div class="number">${noneBankBookResult}개<i class="icon-arrow-up"></i></div>
+				<div class="title">무통장입금 예약 대기</div>
+			</div>
+
 		</div>
--->
+
 		<div class="row-fluid">
 <!--
 			<div class="span3 statbox green" onTablet="span6" onDesktop="span3">

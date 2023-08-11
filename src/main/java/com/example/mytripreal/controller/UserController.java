@@ -1,6 +1,7 @@
 package com.example.mytripreal.controller;
 
 import com.example.mytripreal.service.UserService;
+import com.example.mytripreal.vo.ReservationVo;
 import com.example.mytripreal.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.List;
 
 
 @Controller
@@ -90,7 +92,7 @@ public class UserController {
     // 유저의 정보는 jstl에서 세션에 담긴 정보를 가지고 불러오기 때문에 굳이 DB에 왔다가지않음
     // 만약 주소정보도 가져오려면 DB에서 가져오긴 해야겠지...
     @GetMapping("/myPage")
-    public String toMyPage(HttpSession session, HttpServletResponse response) throws IOException {
+    public String toMyPage(HttpSession session, HttpServletResponse response, String userEmail, ModelMap mm) throws IOException {
         // (null처리)세션에 userEmail이 비어있으면 login으로..아니면 myPage로
         String userSession = session.getAttribute("userEmail") == null ? "" : session.getAttribute("userEmail").toString();
         response.setContentType("text/html; charset=UTF-8");
@@ -100,8 +102,18 @@ public class UserController {
             session.getAttribute("userEmail");
             session.getAttribute("userName");
             session.getAttribute("password");
+
+            /* 나의 예약내역 보기 */
+            List<ReservationVo> reservationVo = userService.getMyReservation(session.getAttribute("userEmail").toString());
+            if(reservationVo.get(0).getUserEmail() != ""){
+                mm.put("reservationVo", reservationVo);
+            }
             return "/myPage";
         }
+
+
+
+
         out.println("<script>alert('잘못된 접근입니다.'); location.href = '/login';</script>");
         out.flush();
         return null;
@@ -120,7 +132,7 @@ public class UserController {
     }
 
     // 마이페이지 - 비밀번호변경을 위한 비밀번호 한번 더 확인 페이지 - 처리
-    @PostMapping("/userUpdate")
+    @PostMapping("/userUpdate.do")
     public String userUpdate(HttpSession session, ModelMap mm, String password, HttpServletResponse response) throws  IOException{
         String userEmail = session.getAttribute("userEmail") == null ? "" : session.getAttribute("userEmail").toString();
         UserVo userVo = new UserVo();
@@ -144,28 +156,25 @@ public class UserController {
 
 
     // 마이페이지 - 회원정보 수정페이지 - 처리
-    @PostMapping("userUpdate.do")
+    @PostMapping("userUpdate")
     public String userUpdateCont(UserVo userVo, HttpSession session, HttpServletResponse response) throws IOException {
         String userEmail = session.getAttribute("userEmail") == null ? "" : session.getAttribute("userEmail").toString();
         String userName = (String) session.getAttribute("userName");
         response.setContentType("text/html; charset=UTF-8");
         PrintWriter out = response.getWriter();
 
-        try{
-            if(userEmail != ""){
-                // userVo에 이미 알고있는 userEmail 넣기
-                userVo.setUserEmail(userEmail);
-                userVo.setUserName(userName);
-                int result = userService.userUpdateModify(userVo);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            return "redirect:/404Error";
+        if(userEmail != ""){
+            // userVo에 이미 알고있는 userEmail 넣기
+            userVo.setUserEmail(userEmail);
+            userVo.setUserName(userName);
+            int result = userService.userUpdateModify(userVo);
         }
         out.println("<script>alert('비밀번호변경 성공!'); location.href = '/myPage';</script>");
         out.flush();
         return null;
     }
+
+
 
 
 

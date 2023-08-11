@@ -26,6 +26,11 @@
             background-size: cover;
             height: 100lvh;
         }
+        .box_none {
+            text-align: center;
+            border: 0;
+            outline: none;
+        }
     </style>
 </head>
 <body data-spy="scroll" data-target="#main-navbar">
@@ -33,14 +38,13 @@
         <section>
             <div class="loginbox">
                 <form action="#none">
-                  <div class="title">가입마지막 단계!</div>
-                  <h3>이메일 인증을 해주세요!</h3>
+                  <div class="title">예약번호</div>
+                  <h3>자세한 예약확인은 마이페이지를 이용해주세요!</h3>
                   <div class="input-box underline">
-                    <input type="text" name="email" placeholder="사용자이메일 불러옴" readonly>
+                    <input type="text" class="box_none" value="<c:out value='${reservationVo.reservation_no}'></c:out>" readonly>
                     <div class="underline"></div>
                   </div>
                 </form>
-                <button type="submit" class="input-box button">인증메일 보내기</button>
             </div>
         </section>
     </div>

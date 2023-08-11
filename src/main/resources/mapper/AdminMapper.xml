@@ -64,6 +64,25 @@
         SELECT COUNT(*) FROM member WHERE regDate = curdate();
     </select>
 
+    <!-- 예약 완료 수 -->
+    <select id="getReservationResult" resultType="int">
+        select count(*) from reservation where confirm_yn = 'Y';
+    </select>
+
+    <!-- 무통장입금 예약 대기 수 -->
+    <select id="noneBankBookResult" resultType="int">
+        select count(*) from reservation where confirm_yn = 'N';
+    </select>
+
+    <!--예약전체보기-->
+    <select id="reservationList" resultType="com.example.mytripreal.vo.ReservationVo">
+        select * from reservation;
+    </select>
+
+    <!-- 무통장입금 승인버튼 -->
+    <update id="noneBankBookOK" parameterType="String">
+        update reservation set confirm_yn = 'Y' where reservation_no = #{reservation_no}
+    </update>
 
 
 </mapper>

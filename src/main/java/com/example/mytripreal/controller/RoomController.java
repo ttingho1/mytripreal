@@ -1,15 +1,11 @@
 package com.example.mytripreal.controller;
 
 import com.example.mytripreal.service.RoomService;
-import com.example.mytripreal.service.UserService;
 import com.example.mytripreal.vo.RoomVo;
-
-import com.example.mytripreal.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,8 +24,6 @@ public class RoomController {
     @Autowired
     private RoomService roomService;
 
-    @Autowired
-    private UserService userService;
 
     // 메인페이지 - 객실미리보기(모든객실가져오기)
     @GetMapping("/")
@@ -52,45 +48,45 @@ public class RoomController {
 
         return "roomDetail";
 
-
     }
 
-    // 빈 객실 전체보기
-    @GetMapping("reservation")
-    public String getRoomEmpty(ModelMap mm, HttpServletResponse response, HttpSession session) {
+    // 빈 객실 전체보기 (기본날짜 - 로딩시)
+    @GetMapping("roomList")
+    public String getRoomList(ModelMap mm, HttpSession session, HttpServletResponse response) throws IOException {
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
         String userSession = session.getAttribute("userEmail") == null ? "" : session.getAttribute("userEmail").toString();
-        List<RoomVo> roomVo = roomService.getEmptyRoomService(mm);
-        mm.put("roomVo", roomVo);
 
-        return "reservation";
-    }
-
-    @GetMapping("payment")
-    public String getPayment(HttpSession session){
-        String userSession = session.getAttribute("userEmail") == null ? "" : session.getAttribute("userEmail").toString();
-        if(userSession == ""){
-            return "/login";
+        if(userSession != ""){
+            List<RoomVo> roomVo = roomService.getRoomList(mm);
+            mm.put("roomVo", roomVo);
+            return "roomList";
         }
-        return "/";
+        out.println("<script>alert('로그인이 필요합니다!'); location.href = '/login';</script>");
+        out.flush();
+        return null;
+
     }
 
-    // 최종결제
-    @PostMapping("payment")
-    public String payment(HttpServletRequest request, HttpSession session, ModelMap mm){
-        String room_No = request.getParameter("room_No");
-        RoomVo roomVo = roomService.getRoomInfo(room_No);
-        String userEmail = session.getAttribute("userEmail").toString();
-        UserVo userVo = userService.getUserInfoByEmail(userEmail);
-        String checkin_date = request.getParameter("checkin_date") == null ? "" : request.getParameter("checkin_date").toString();
-        String checkout_date = request.getParameter("checkout_date") == null ? "" : request.getParameter("checkout_date").toString();
+    // 예약안된 객실만 보기 (테스트중)
+    @GetMapping("roomSearch")
+    public String reservationRoomList(ModelMap mm, HttpServletRequest request) throws IOException {
+        String checkin_date = request.getParameter("checkin_date") == null ? "" : request.getParameter("checkin_date");
+        String checkout_date = request.getParameter("checkout_date") == null ? "" : request.getParameter("checkout_date");
 
+        HashMap hashMap = new HashMap();
+        hashMap.put("checkin_date", checkin_date);
+        hashMap.put("checkout_date", checkout_date);
+
+        List<RoomVo> roomVo = roomService.reservationRoomList(hashMap);
         mm.put("roomVo", roomVo);
-        mm.put("userVo", userVo);
-        mm.put("checkin_date", checkin_date);
-        mm.put("checkout_date", checkout_date);
 
-        return "payment";
+
+        return "roomList";
     }
+
+
+
 
 
 

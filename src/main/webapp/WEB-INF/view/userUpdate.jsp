@@ -102,7 +102,6 @@ var test = {
 
     },
 
-    // passwd2 : function (e) {}
 }
 
 

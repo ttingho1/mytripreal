@@ -1,9 +1,11 @@
 package com.example.mytripreal.mapper;
 
+import com.example.mytripreal.vo.ReservationVo;
 import com.example.mytripreal.vo.UserVo;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.HashMap;
+import java.util.List;
 
 @Mapper
 public interface UserMapper {
@@ -23,5 +25,8 @@ public interface UserMapper {
 
     // 이메일 기반 유저 정보 가져오기
     UserVo getUserInfoByEmail(String userEmail);
+
+    // 나의 예약내역 보기
+    List<ReservationVo> getMyReservation(String userEmail);
 
 }

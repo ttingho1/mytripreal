@@ -2,14 +2,17 @@ package com.example.mytripreal.controller;
 
 
 import com.example.mytripreal.service.AdminService;
+import com.example.mytripreal.service.ReservationService;
 import com.example.mytripreal.vo.AdminVo;
 import com.example.mytripreal.vo.BoardVo;
+import com.example.mytripreal.vo.ReservationVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -49,6 +52,12 @@ public class AdminController {
         // 오늘가입한 회원수
         int todayJoinResult = adminService.todayJoinMemberService(mm);
         mm.addAttribute("todayJoinResult", todayJoinResult);
+        // 예약 확정 수
+        int getReservationResult = adminService.getReservationResult(mm);
+        mm.addAttribute("getReservationResult", getReservationResult);
+        // 무통장입금 - 예약대기 수
+        int noneBankBookResult = adminService.noneBankBookResult(mm);
+        mm.addAttribute("noneBankBookResult", noneBankBookResult);
 
         return "/admin/index";
     }
@@ -137,7 +146,7 @@ public class AdminController {
 
     // 문의관리 - 답변달기
     @PostMapping("/admin/qnaAnswer")
-    public String qnaAnswer(HttpSession session, int num, String answerAdmin, String userName, String contentAnswer, HttpServletResponse response) throws IOException {
+    public String qnaAnswer(HttpSession session, int num, String answerAdmin, String contentAnswer, HttpServletResponse response) throws IOException {
         String level = session.getAttribute("level") == null ? "" : session.getAttribute("level").toString();
         HashMap hashMap = new HashMap();
         response.setContentType("text/html; charset=UTF-8");
@@ -160,6 +169,36 @@ public class AdminController {
 
     }
 
+    // 예약관리 - 글보기(예약전체보기)
+    @GetMapping("/admin/reservationList")
+    public String reservationList(HttpSession session, ModelMap mm){
+        String userEmail = session.getAttribute("userEmail") == null ? "" : session.getAttribute("userEmail").toString();
+        if(userEmail == ""){
+            return "/admin/login";
+        }
+        List<ReservationVo> reservationVo = adminService.reservationList(mm);
+        if(reservationVo.get(0).getReservation_no() != ""){
+            mm.put("reservationVo", reservationVo);
+            return "/admin/reservationList";
+        }
+
+        return "/admin/login";
+    }
+
+    // (테스트) 버튼 값 넘기기
+    @PostMapping("/admin/confirmIsY")
+    public String confirmIsY(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String reservation_no = request.getParameter("reservation_no") == null ? "" : request.getParameter("reservation_no");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+
+        if(reservation_no != ""){
+            adminService.noneBankBookOK(reservation_no);
+        }
+        out.println("<script>alert('승인되었습니다.'); location.href = '/admin/reservationList';</script>");
+        out.flush();
+        return null;
+    }
 
 
 

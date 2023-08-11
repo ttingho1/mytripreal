@@ -5,9 +5,22 @@
     <!-- 회원가입 -->
     <insert id="insertUser" parameterType="com.example.mytripreal.vo.UserVo" >
         INSERT INTO member
-            (userEmail, password, userName, hp1, hp2, hp3, address1, address2, zipCode, regDate, updDate, lateDate, quitYn)
-        VALUES
-            (#{userEmail}, #{password}, #{userName}, #{hp1}, #{hp2}, #{hp3}, #{address1}, #{address2}, #{zipCode}, now(), now(), now(), 'N');
+                (userEmail,
+                 password,
+                 userName,
+                 hp1, hp2, hp3,
+                 address1, address2, zipCode,
+                 regDate, updDate, lateDate, quitYn
+                 )
+            VALUES
+                (
+                 #{userEmail},
+                 #{password},
+                 #{userName},
+                 #{hp1}, #{hp2}, #{hp3},
+                 #{address1}, #{address2}, #{zipCode},
+                 now(), now(), now(), 'N'
+                 );
     </insert>
 
     <!-- 로그인 -->
@@ -56,5 +69,13 @@
                           zipCode = #{zipCode}
         WHERE userEmail = #{userEmail}
     </update>
+
+    <!-- 나의 예약내역 보기-->
+    <select id="getMyReservation" parameterType="String" resultType="com.example.mytripreal.vo.ReservationVo">
+        SELECT *
+        FROM reservation
+        WHERE userEmail = #{userEmail}
+        LIMIT 3
+    </select>
 
 </mapper>

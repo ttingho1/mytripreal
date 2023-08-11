@@ -2,27 +2,32 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.mytripreal.mapper.RoomMapper">	<!-- mapper 인터페이스가 위치하는 경로 -->
 
-    <!-- 메인페이지 - 객실미리보기   -->
+    <!-- 메인페이지 - 객실미리보기, 객실모두 불러오기   -->
     <select id="getRoomList" resultType="com.example.mytripreal.vo.RoomVo">
         SELECT ROOM_NO, ROOM_NAME, ROOM_TYPE, ROOM_SIZE, ROOM_FEE, `OPTION`, PERSON_MAX, PERSON_MIN,
                MAIN_IMAGE, SUB_IMAGE1, SUB_IMAGE2, SUB_IMAGE3, SUB_IMAGE4, SUB_IMAGE5, DETAIL_IMAGE1, DETAIL_IMAGE2, DETAIL_IMAGE3
-            FROM room;
+                FROM ROOM;
     </select>
 
     <!-- 객실 상세보기 -->
     <select id="getRoomInfo" parameterType="String" resultType="com.example.mytripreal.vo.RoomVo">
         SELECT ROOM_NO, ROOM_NAME, ROOM_TYPE, ROOM_SIZE, ROOM_FEE, `OPTION`, PERSON_MAX, PERSON_MIN,
                MAIN_IMAGE, SUB_IMAGE1, SUB_IMAGE2, SUB_IMAGE3, SUB_IMAGE4, SUB_IMAGE5, DETAIL_IMAGE1, DETAIL_IMAGE2, DETAIL_IMAGE3
-                FROM room
-                    WHERE room_no = #{room_no};
+                FROM ROOM
+                    WHERE ROOM_NO = #{room_no};
     </select>
 
-    <!-- 빈 객실 모두 불러오기(결제확정여부 N) -->
-    <select id="getEmptyRoom" resultType="com.example.mytripreal.vo.RoomVo">
-        SELECT ROOM_NO, ROOM_NAME, ROOM_TYPE, ROOM_SIZE, ROOM_FEE, `OPTION`, PERSON_MAX, PERSON_MIN,
-               MAIN_IMAGE, SUB_IMAGE1, SUB_IMAGE2, SUB_IMAGE3, SUB_IMAGE4, SUB_IMAGE5, DETAIL_IMAGE1, DETAIL_IMAGE2, DETAIL_IMAGE3
-            FROM room;
+    <!-- 예약된 객실은 검색해서 비활성화 -->
+    <select id="reservationRoomList" parameterType="hashMap" resultType="com.example.mytripreal.vo.RoomVo">
+        /*select room_no, checkin_date, checkout_date from reservation
+        where checkin_date between #{checkin_date} and #{checkin_date}
+          and checkout_date between #{checkout_date} and #{checkout_date};*/
+
+
     </select>
+
+
+
 
 
 

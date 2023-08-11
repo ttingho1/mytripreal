@@ -42,5 +42,16 @@ public interface AdminMapper {
     // 오늘 가입한 회원수
     int todayJoinMember(ModelMap mm);
 
+    // 예약완료 수
+    int getReservationResult(ModelMap mm);
+
+    // 무통장입금 - 예약대기 수
+    int noneBankBookResult(ModelMap mm);
+
+    List<ReservationVo> reservationList(ModelMap mm);
+
+    // 무통장입금 - 입금대기 승인버튼
+    boolean noneBankBookOK(String reservation_no);
+
 
 }

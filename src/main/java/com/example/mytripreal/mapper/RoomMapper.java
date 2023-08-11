@@ -14,8 +14,10 @@ public interface RoomMapper {
     List<RoomVo> getRoomList(ModelMap mm);
 
     // 객실 상세보기
-    RoomVo getRoomInfo(String room_No);
+    RoomVo getRoomInfo(String room_no);
 
-    // 빈 객실 모두 불러오기(결제확정여부 N)
-    List<RoomVo> getEmptyRoom(ModelMap mm);
+    // 예약된 객실은 검색해서 비활성화
+    List<RoomVo> reservationRoomList(HashMap hashMap);
+
+
 }
